@@ -3,40 +3,213 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard de Soporte – Renca</title>
+<title>Dashboard de Soporte - Renca</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
-  :root {
-    --bg: #0f1117;
-    --bg2: #161b27;
-    --bg3: #1e2535;
-    --border: rgba(255,255,255,0.07);
-    --border2: rgba(255,255,255,0.12);
-    --text: #e8eaf0;
-    --text2: #8b92a8;
-    --text3: #555e78;
-    --accent: #4f8ef7;
-    --accent2: #7c5cfc;
-    --green: #34d399;
-    --amber: #fbbf24;
-    --red: #f87171;
-    --teal: #22d3ee;
-    --radius: 12px;
-    --radius-sm: 8px;
+:root{--bg:#0f1117;--bg2:#161b27;--bg3:#1e2535;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--text:#e8eaf0;--text2:#8b92a8;--text3:#555e78;--accent:#4f8ef7;--accent2:#7c5cfc;--green:#34d399;--amber:#fbbf24;--red:#f87171;--teal:#22d3ee;--radius:12px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6}
+.header{padding:20px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(15,17,23,0.95);backdrop-filter:blur(12px);z-index:100}
+.header-left{display:flex;align-items:center;gap:12px}
+.logo{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;color:#fff}
+.header h1{font-size:15px;font-weight:600;color:var(--text);letter-spacing:-0.2px}
+.header-sub{font-size:11px;color:var(--text2);margin-top:1px}
+.last-update{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+.refresh-btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all .15s}
+.refresh-btn:hover{background:var(--bg2);color:var(--text);border-color:var(--accent)}
+.main{padding:24px 28px;max-width:1400px;margin:0 auto}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:16px}
+.spinner{width:36px;height:36px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading p{color:var(--text2);font-size:13px}
+.error-box{background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px;color:#fca5a5;font-size:13px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:24px}
+.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--kpi-color,var(--accent));opacity:.7}
+.kpi-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.kpi-value{font-size:26px;font-weight:600;color:var(--text);letter-spacing:-1px;line-height:1}
+.kpi-sub{font-size:11px;color:var(--text2);margin-top:6px}
+.section-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;margin-top:28px}
+.charts-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.charts-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px}
+.chart-card.full{grid-column:1/-1}
+.chart-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px}
+.chart-sub{font-size:11px;color:var(--text3);margin-bottom:12px}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
+.leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{padding:10px 14px;text-align:left;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;background:var(--bg3);border-bottom:1px solid var(--border)}
+tbody td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--bg3)}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;font-family:'DM Mono',monospace}
+.b-open{background:rgba(79,142,247,0.15);color:#93bbfc}
+.b-pending{background:rgba(251,191,36,0.15);color:#fcd34d}
+.b-resolved{background:rgba(52,211,153,0.15);color:#6ee7b7}
+.b-closed{background:rgba(52,211,153,0.10);color:#86efac}
+.b-urgent{background:rgba(248,113,113,0.15);color:#fca5a5}
+.b-high{background:rgba(251,191,36,0.15);color:#fcd34d}
+.b-medium{background:rgba(79,142,247,0.15);color:#93bbfc}
+.b-low{background:rgba(139,146,168,0.15);color:#a1a8bc}
+.bar-mini{height:4px;border-radius:2px;margin-top:6px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s ease}
+@media(max-width:900px){.charts-2,.charts-3{grid-template-columns:1fr}.main{padding:16px}.header{padding:14px}}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-left">
+    <div class="logo">S</div>
+    <div>
+      <h1>Dashboard de Soporte</h1>
+      <div class="header-sub">Metricas de tickets · Freshdesk</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="last-update" id="last-update"></span>
+    <button class="refresh-btn" onclick="loadData()">Actualizar</button>
+  </div>
+</header>
+<main class="main" id="main">
+  <div class="loading" id="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando datos desde Google Sheets...</p>
+  </div>
+</main>
+<script>
+var SHEET_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vQ1f3IBca3MrvNThStVb46n7VF28EKIWbty36-LX9b7l8FmiCjC5TM_rKL-DS1XWkjdJrISXcGDLDZE/pub?gid=0&single=true&output=csv';
+var COL={status:'Estado',priority:'Prioridad',agent:'Agente',group:'Grupo',created:'Tiempo de creacion',overdue:'Vencidas hasta ahora',resolveH:'Tiempo de resolucion (en horas)',firstRespH:'Primer tiempo de respuesta (en horas)',firstRespStatus:'Estado de la primera respuesta'};
+var charts={};
+function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+function normStatus(s){
+  s=(s||'').trim().toLowerCase();
+  if(s==='open'||s==='2')return 'Open';
+  if(s==='pending'||s==='3')return 'Pending';
+  if(s==='resolved'||s==='4')return 'Resolved';
+  if(s==='closed'||s==='5')return 'Closed';
+  return s||'Unknown';
+}
+function normPriority(p){
+  p=(p||'').trim().toLowerCase();
+  if(p==='low'||p==='1')return 'Low';
+  if(p==='medium'||p==='2')return 'Medium';
+  if(p==='high'||p==='3')return 'High';
+  if(p==='urgent'||p==='4')return 'Urgent';
+  return p||'Unknown';
+}
+function badge(text,cls){return '<span class="badge '+cls+'">'+text+'</span>';}
+function loadData(){
+  document.getElementById('main').innerHTML='<div class="loading"><div class="spinner"></div><p>Cargando datos desde Google Sheets...</p></div>';
+  fetch(SHEET_URL)
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
+    .then(function(csv){
+      var results=Papa.parse(csv,{header:true,skipEmptyLines:true});
+      if(!results.data||results.data.length===0){showError('No se encontraron datos en la planilla.');return;}
+      renderDashboard(results.data);
+    })
+    .catch(function(err){showError('Error al conectar con Google Sheets: '+err.message);});
+}
+function showError(msg){
+  document.getElementById('main').innerHTML='<div class="error-box">Error: '+msg+'</div>';
+}
+function renderDashboard(raw){
+  var tickets=raw.map(function(r){
+    var agent=(r['Agente']||r['Agent']||'Sin asignar').trim();
+    var resolveH=parseFloat(r['Tiempo de resolucion (en horas)']||r['Tiempo de resolución (en horas)']||r['Resolution Time (in hrs)']||r['resolution_time_in_hours']||0)||null;
+    var firstRespH=parseFloat(r['Primer tiempo de respuesta (en horas)']||r['First Response Time (in hrs)']||0)||null;
+    var ov=(r['Vencidas hasta ahora']||r['Is Overdue']||'').toLowerCase();
+    return{
+      status:normStatus(r['Estado']||r['Status']||''),
+      priority:normPriority(r['Prioridad']||r['Priority']||''),
+      agent:agent,
+      created:r['Tiempo de creacion']||r['Tiempo de creación']||r['Created At']?new Date(r['Tiempo de creacion']||r['Tiempo de creación']||r['Created At']):null,
+      resolveH:resolveH,
+      firstRespH:firstRespH,
+      overdue:ov==='yes'||ov==='si'||ov==='si'||ov==='true'
+    };
+  });
+  var total=tickets.length;
+  var open=tickets.filter(function(t){return t.status==='Open';}).length;
+  var pending=tickets.filter(function(t){return t.status==='Pending';}).length;
+  var resolved=tickets.filter(function(t){return t.status==='Resolved'||t.status==='Closed';}).length;
+  var overdue=tickets.filter(function(t){return t.overdue;}).length;
+  var withRes=tickets.filter(function(t){return t.resolveH&&t.resolveH>0;});
+  var avgRes=withRes.length?(withRes.reduce(function(s,t){return s+t.resolveH;},0)/withRes.length):0;
+  var withResp=tickets.filter(function(t){return t.firstRespH&&t.firstRespH>0;});
+  var avgResp=withResp.length?(withResp.reduce(function(s,t){return s+t.firstRespH;},0)/withResp.length):0;
+  var agentMap={};
+  tickets.forEach(function(t){
+    if(!agentMap[t.agent])agentMap[t.agent]={name:t.agent,total:0,open:0,resolved:0,resH:[],respH:[]};
+    agentMap[t.agent].total++;
+    if(t.status==='Open')agentMap[t.agent].open++;
+    if(t.status==='Resolved'||t.status==='Closed')agentMap[t.agent].resolved++;
+    if(t.resolveH&&t.resolveH>0)agentMap[t.agent].resH.push(t.resolveH);
+    if(t.firstRespH&&t.firstRespH>0)agentMap[t.agent].respH.push(t.firstRespH);
+  });
+  var agents=Object.values(agentMap).sort(function(a,b){return b.total-a.total;}).slice(0,10);
+  agents.forEach(function(a){
+    a.avgRes=a.resH.length?Math.round(a.resH.reduce(function(s,v){return s+v;},0)/a.resH.length):null;
+    a.avgResp=a.respH.length?Math.round(a.respH.reduce(function(s,v){return s+v;},0)/a.respH.length):null;
+  });
+  var now=new Date();
+  var weeks=[];
+  for(var i=0;i<12;i++){
+    var d=new Date(now);d.setDate(d.getDate()-(11-i)*7);
+    weeks.push({label:'S'+(i+1),start:new Date(d.getFullYear(),d.getMonth(),d.getDate()-d.getDay()),count:0});
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 14px;
-    line-height: 1.6;
-  }
-  .header {
-    padding: 24px 32px 20px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-   
+  tickets.forEach(function(t){
+    if(!t.created||isNaN(t.created))return;
+    for(var i=weeks.length-1;i>=0;i--){if(t.created>=weeks[i].start){weeks[i].count++;break;}}
+  });
+  var statuses=['Open','Pending','Resolved','Closed'];
+  var priorities=['Urgent','High','Medium','Low'];
+  var statusColors=['#4f8ef7','#fbbf24','#34d399','#22d3ee'];
+  var prioColors=['#f87171','#fbbf24','#4f8ef7','#8b92a8'];
+  var agentColors=['#4f8ef7','#7c5cfc','#34d399','#fbbf24','#f87171','#22d3ee','#a78bfa','#fb923c','#4ade80','#e879f9'];
+  var statusCounts=statuses.map(function(s){return tickets.filter(function(t){return t.status===s;}).length;});
+  var prioCounts=priorities.map(function(p){return tickets.filter(function(t){return t.priority===p;}).length;});
+  document.getElementById('last-update').textContent='Actualizado '+new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+  var maxTotal=Math.max.apply(null,agents.map(function(a){return a.total;}),1)||1;
+  var agentRows=agents.map(function(a){
+    return '<tr><td style="font-weight:500">'+a.name+'</td><td>'+a.total+'</td><td>'+badge(a.open,'b-open')+'</td><td style="color:var(--green)">'+a.resolved+'</td><td style="font-family:DM Mono,monospace;color:var(--teal)">'+(a.avgRes!==null?a.avgRes+'h':'—')+'</td><td style="font-family:DM Mono,monospace;color:var(--accent2)">'+(a.avgResp!==null?a.avgResp+'h':'—')+'</td><td style="min-width:80px"><div style="font-size:11px;color:var(--text3)">'+Math.round(a.total/maxTotal*100)+'%</div><div class="bar-mini" style="width:'+Math.round(a.total/maxTotal*100)+'%"></div></td></tr>';
+  }).join('');
+  document.getElementById('main').innerHTML=
+    '<div class="kpi-grid">'+
+      '<div class="kpi-card" style="--kpi-color:#4f8ef7"><div class="kpi-label">Total tickets</div><div class="kpi-value">'+total+'</div><div class="kpi-sub">en la planilla</div></div>'+
+      '<div class="kpi-card" style="--kpi-color:#4f8ef7"><div class="kpi-label">Abiertos</div><div class="kpi-value" style="color:var(--accent)">'+open+'</div><div class="kpi-sub">'+(total>0?Math.round(open/total*100):0)+'% del total</div></div>'+
+      '<div class="kpi-card" style="--kpi-color:#fbbf24"><div class="kpi-label">Pendientes</div><div class="kpi-value" style="color:var(--amber)">'+pending+'</div><div class="kpi-sub">en espera</div></div>'+
+      '<div class="kpi-card" style="--kpi-color:#34d399"><div class="kpi-label">Resueltos/Cerrados</div><div class="kpi-value" style="color:var(--green)">'+resolved+'</div><div class="kpi-sub">'+(total>0?Math.round(resolved/total*100):0)+'% del total</div></div>'+
+      '<div class="kpi-card" style="--kpi-color:#f87171"><div class="kpi-label">Vencidos</div><div class="kpi-value" style="color:var(--red)">'+overdue+'</div><div class="kpi-sub">SLA incumplido</div></div>'+
+      '<div class="kpi-card" style="--kpi-color:#22d3ee"><div class="kpi-label">Tiempo prom. resolucion</div><div class="kpi-value" style="color:var(--teal)">'+(avgRes>0?avgRes.toFixed(1)+'h':'N/A')+'</div><div class="kpi-sub">promedio</div></div>'+
+      '<div class="kpi-card" style="--kpi-color:#7c5cfc"><div class="kpi-label">1a respuesta prom.</div><div class="kpi-value" style="color:var(--accent2)">'+(avgResp>0?avgResp.toFixed(1)+'h':'N/A')+'</div><div class="kpi-sub">tiempo respuesta</div></div>'+
+    '</div>'+
+    '<p class="section-title">Distribucion de tickets</p>'+
+    '<div class="charts-3">'+
+      '<div class="chart-card"><div class="chart-title">Por estado</div><div class="chart-sub">Distribucion actual</div><div id="leg-status" class="legend"></div><div style="position:relative;height:200px"><canvas id="chart-status"></canvas></div></div>'+
+      '<div class="chart-card"><div class="chart-title">Por prioridad</div><div class="chart-sub">Nivel de urgencia</div><div id="leg-prio" class="legend"></div><div style="position:relative;height:200px"><canvas id="chart-prio"></canvas></div></div>'+
+      '<div class="chart-card"><div class="chart-title">Por agente</div><div class="chart-sub">Top agentes</div><div style="position:relative;height:200px"><canvas id="chart-agent"></canvas></div></div>'+
+    '</div>'+
+    '<p class="section-title">Volumen semanal</p>'+
+    '<div class="chart-card full" style="margin-bottom:14px"><div class="chart-title">Tickets creados por semana</div><div class="chart-sub">Ultimas 12 semanas</div><div style="position:relative;height:180px"><canvas id="chart-vol"></canvas></div></div>'+
+    '<p class="section-title">Resumen por agente</p>'+
+    '<div class="table-wrap"><table><thead><tr><th>Agente</th><th>Total</th><th>Abiertos</th><th>Resueltos</th><th>Tiempo res.</th><th>1a resp.</th><th>Carga</th></tr></thead><tbody>'+agentRows+'</tbody></table></div>';
+  var opts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}};
+  destroyChart('status');
+  charts['status']=new Chart(document.getElementById('chart-status'),{type:'doughnut',data:{labels:statuses,datasets:[{data:statusCounts,backgroundColor:statusColors,borderWidth:0,hoverOffset:4}]},options:Object.assign({},opts,{cutout:'65%'})});
+  document.getElementById('leg-status').innerHTML=statuses.map(function(s,i){return '<span class="leg"><span class="leg-dot" style="background:'+statusColors[i]+'"></span>'+s+' ('+statusCounts[i]+')</span>';}).join('');
+  destroyChart('prio');
+  charts['prio']=new Chart(document.getElementById('chart-prio'),{type:'doughnut',data:{labels:priorities,datasets:[{data:prioCounts,backgroundColor:prioColors,borderWidth:0,hoverOffset:4}]},options:Object.assign({},opts,{cutout:'65%'})});
+  document.getElementById('leg-prio').innerHTML=priorities.map(function(p,i){return '<span class="leg"><span class="leg-dot" style="background:'+prioColors[i]+'"></span>'+p+' ('+prioCounts[i]+')</span>';}).join('');
+  destroyChart('agent');
+  charts['agent']=new Chart(document.getElementById('chart-agent'),{type:'bar',data:{labels:agents.slice(0,8).map(function(a){return a.name.split(' ')[0];}),datasets:[{data:agents.slice(0,8).map(function(a){return a.total;}),backgroundColor:agentColors,borderRadius:4,borderSkipped:false}]},options:Object.assign({},opts,{scales:{x:{ticks:{color:'#555e78',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#555e78',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}}}})});
+  destroyChart('vol');
+  charts['vol']=new Chart(document.getElementById('chart-vol'),{type:'line',data:{labels:weeks.map(function(w){return w.label;}),datasets:[{data:weeks.map(function(w){return w.count;}),borderColor:'#4f8ef7',backgroundColor:'rgba(79,142,247,0.08)',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#4f8ef7',pointBorderColor:'#0f1117',pointBorderWidth:2}]},options:Object.assign({},opts,{scales:{x:{ticks:{color:'#555e78',font:{size:11},autoSkip:false,maxRotation:0},grid:{display:false}},y:{beginAtZero:true,ticks:{color:'#555e78',font:{size:11},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'}}}})});
+}
+loadData();
+</script>
+</body>
+</html>
