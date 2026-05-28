@@ -160,9 +160,15 @@ function reloadData() {
           priority:  normPriority(getField(r, ['Prioridad','Priority'])),
           agent:     (getField(r, ['Agente','Agent','Assigned To']) || 'Sin asignar').trim(),
           created:   parseDate(getField(r, ['Tiempo de creacion','Tiempo de creación','Created At','created_at'])),
+          company:   (getField(r, ['Nombre de la empresa','Company Name','company','empresa']) || 'Sin empresa').trim(),
           resolveH:  parseFloat(getField(r, ['Tiempo de resolucion (en horas)','Tiempo de resolución (en horas)','Resolution Time (in hrs)'])) || null,
           firstRespH:parseFloat(getField(r, ['Primer tiempo de respuesta (en horas)','First Response Time (in hrs)'])) || null,
-          overdue:   ['yes','si','sí','true'].indexOf((getField(r,['Vencidas hasta ahora','Is Overdue'])||'').toLowerCase()) >= 0
+          overdue:   (function(){
+            var v = (getField(r,['Estado de resolucion','Estado de resolución','Resolution Status','resolution_status'])||'').toLowerCase().trim();
+            if (v.indexOf('violated') >= 0 || v.indexOf('sla violated') >= 0) return true;
+            var v2 = (getField(r,['Vencidas hasta ahora','Is Overdue'])||'').toLowerCase().trim();
+            return ['yes','si','sí','true'].indexOf(v2) >= 0;
+          })()
         };
       });
       // Set date range to full range
@@ -245,6 +251,25 @@ function renderDashboard(tickets) {
     if (monthMap[key][s] !== undefined) monthMap[key][s]++;
     monthMap[key].total++;
   });
+  // Top 10 empresas por volumen mensual
+  var companyTotals = {};
+  tickets.forEach(function(t) {
+    if (!companyTotals[t.company]) companyTotals[t.company] = 0;
+    companyTotals[t.company]++;
+  });
+  var top10 = Object.keys(companyTotals).sort(function(a,b){ return companyTotals[b]-companyTotals[a]; }).slice(0,10);
+
+  var companyMonthMap = {};
+  top10.forEach(function(c) { companyMonthMap[c] = {}; });
+  tickets.forEach(function(t) {
+    if (!t.created || isNaN(t.created)) return;
+    if (top10.indexOf(t.company) < 0) return;
+    var key = t.created.getFullYear()+'-'+String(t.created.getMonth()+1).padStart(2,'0');
+    if (!companyMonthMap[t.company][key]) companyMonthMap[t.company][key] = {created:0, resolved:0};
+    companyMonthMap[t.company][key].created++;
+    if (t.status==='Resolved'||t.status==='Closed') companyMonthMap[t.company][key].resolved++;
+  });
+
   var monthKeys   = Object.keys(monthMap).sort();
   var monthLabels = monthKeys.map(function(k) {
     var p = k.split('-');
@@ -292,6 +317,13 @@ function renderDashboard(tickets) {
         leg('#e2e8f0','Total (todos los estados)')+
       '</div>'+
       '<div style="position:relative;height:280px"><canvas id="chart-monthly"></canvas></div>'+
+    '</div>'+
+    '<p class="section-title">Tickets por mes — top 10 empresas</p>'+
+    '<div class="chart-card">'+
+      '<div class="chart-title">Volumen mensual por empresa</div>'+
+      '<div class="chart-sub">Linea solida: creados · Linea punteada: resueltos+cerrados</div>'+
+      '<div id="leg-company" class="legend"></div>'+
+      '<div style="position:relative;height:300px"><canvas id="chart-company"></canvas></div>'+
     '</div>'+
     '<p class="section-title">Distribucion</p>'+
     '<div class="charts-3">'+
@@ -343,6 +375,55 @@ function renderDashboard(tickets) {
       }
     }
   });
+
+  // Chart empresas
+  var companyColors = ['#4f8ef7','#34d399','#fbbf24','#f87171','#7c5cfc','#22d3ee','#fb923c','#a78bfa','#4ade80','#e879f9'];
+  destroyChart('company');
+  charts['company'] = new Chart(document.getElementById('chart-company'), {
+    type: 'line',
+    data: {
+      labels: monthLabels,
+      datasets: top10.map(function(c, i) {
+        var color = companyColors[i % companyColors.length];
+        return [
+          {
+            label: c+' (creados)',
+            data: monthKeys.map(function(k){ return companyMonthMap[c][k]?companyMonthMap[c][k].created:0; }),
+            borderColor: color, backgroundColor: 'transparent',
+            borderWidth: 2, borderDash: [],
+            pointRadius: 2, pointBackgroundColor: color,
+            tension: 0.3, fill: false
+          },
+          {
+            label: c+' (resueltos)',
+            data: monthKeys.map(function(k){ return companyMonthMap[c][k]?companyMonthMap[c][k].resolved:0; }),
+            borderColor: color, backgroundColor: 'transparent',
+            borderWidth: 1.5, borderDash: [4,3],
+            pointRadius: 2, pointBackgroundColor: color,
+            tension: 0.3, fill: false
+          }
+        ];
+      }).reduce(function(a,b){ return a.concat(b); }, [])
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: {display:false},
+        tooltip: {mode:'index', intersect:false, callbacks:{label:function(ctx){return ' '+ctx.dataset.label+': '+ctx.parsed.y;}}}
+      },
+      scales: {
+        x: {ticks:{color:'#555e78',font:{size:11},autoSkip:false,maxRotation:45},grid:{display:false}},
+        y: {beginAtZero:true,ticks:{color:'#555e78',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}}
+      }
+    }
+  });
+  document.getElementById('leg-company').innerHTML = top10.map(function(c,i){
+    var color = companyColors[i%companyColors.length];
+    var total = companyTotals[c];
+    var res = tickets.filter(function(t){ return t.company===c&&(t.status==='Resolved'||t.status==='Closed'); }).length;
+    return '<span class="leg"><span class="leg-dot" style="background:'+color+'"></span>'+c+
+      ' <span style="color:var(--text3);font-size:10px">'+total+' creados / '+res+' resueltos</span></span>';
+  }).join('');
 
   var baseOpts = {responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}};
 
