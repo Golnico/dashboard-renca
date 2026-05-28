@@ -163,6 +163,7 @@ function reloadData() {
           company:   (getField(r, ['Nombre de la empresa','Company Name','company','empresa']) || 'Sin empresa').trim(),
           resolveH:  parseFloat(getField(r, ['Tiempo de resolucion (en horas)','Tiempo de resolución (en horas)','Resolution Time (in hrs)'])) || null,
           firstRespH:parseFloat(getField(r, ['Primer tiempo de respuesta (en horas)','First Response Time (in hrs)'])) || null,
+          slaStatus: (getField(r,['Estado de resolucion','Estado de resolución','Resolution Status','resolution_status'])||'').trim(),
           overdue:   (function(){
             var v = (getField(r,['Estado de resolucion','Estado de resolución','Resolution Status','resolution_status'])||'').toLowerCase().trim();
             if (v.indexOf('violated') >= 0 || v.indexOf('sla violated') >= 0) return true;
@@ -270,6 +271,17 @@ function renderDashboard(tickets) {
     if (t.status==='Resolved'||t.status==='Closed') companyMonthMap[t.company][key].resolved++;
   });
 
+  // SLA mensual
+  var slaMonthMap = {};
+  tickets.forEach(function(t) {
+    if (!t.created || isNaN(t.created)) return;
+    var key = t.created.getFullYear()+'-'+String(t.created.getMonth()+1).padStart(2,'0');
+    if (!slaMonthMap[key]) slaMonthMap[key] = {within:0, violated:0};
+    var s = (t.slaStatus||'').toLowerCase();
+    if (s.indexOf('violated') >= 0) slaMonthMap[key].violated++;
+    else if (s.indexOf('within') >= 0 || s.indexOf('sla') >= 0) slaMonthMap[key].within++;
+  });
+
   var monthKeys   = Object.keys(monthMap).sort();
   var monthLabels = monthKeys.map(function(k) {
     var p = k.split('-');
@@ -318,12 +330,25 @@ function renderDashboard(tickets) {
       '</div>'+
       '<div style="position:relative;height:280px"><canvas id="chart-monthly"></canvas></div>'+
     '</div>'+
-    '<p class="section-title">Tickets por mes — top 10 empresas</p>'+
+    '<p class="section-title">Tickets creados vs resueltos por empresa</p>'+
     '<div class="chart-card">'+
-      '<div class="chart-title">Volumen mensual por empresa</div>'+
-      '<div class="chart-sub">Linea solida: creados · Linea punteada: resueltos+cerrados</div>'+
+      '<div class="chart-title">Creados vs Resueltos por mes</div>'+
+      '<div class="chart-sub">Selecciona una empresa para ver el detalle mensual</div>'+
+      '<div style="margin-bottom:12px">'+
+        '<select id="company-select" onchange="updateCompanyChart()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:6px 12px;font-size:13px;font-family:DM Sans,sans-serif;outline:none;cursor:pointer;min-width:220px"></select>'+
+      '</div>'+
       '<div id="leg-company" class="legend"></div>'+
-      '<div style="position:relative;height:300px"><canvas id="chart-company"></canvas></div>'+
+      '<div style="position:relative;height:280px"><canvas id="chart-company"></canvas></div>'+
+    '</div>'+
+    '<p class="section-title">SLA por mes</p>'+
+    '<div class="chart-card">'+
+      '<div class="chart-title">Within SLA vs SLA Violated por mes</div>'+
+      '<div class="chart-sub">Barras apiladas: verde = cumplido · rojo = violado</div>'+
+      '<div class="legend">'+
+        '<span class="leg"><span class="leg-dot" style="background:#34d399"></span>Within SLA</span>'+
+        '<span class="leg"><span class="leg-dot" style="background:#f87171"></span>SLA Violated</span>'+
+      '</div>'+
+      '<div style="position:relative;height:280px"><canvas id="chart-sla"></canvas></div>'+
     '</div>'+
     '<p class="section-title">Distribucion</p>'+
     '<div class="charts-3">'+
@@ -376,54 +401,60 @@ function renderDashboard(tickets) {
     }
   });
 
-  // Chart empresas
+  // Guardar datos para uso en updateCompanyChart
+  window._dashMonthKeys = monthKeys;
+  window._dashMonthLabels = monthLabels;
+  window._dashCompanyMonthMap = companyMonthMap;
+  window._dashTop10 = top10;
+  window._dashCompanyTotals = companyTotals;
+
+  // Poblar select
+  var sel = document.getElementById('company-select');
+  if (sel) {
+    sel.innerHTML = top10.map(function(c){ return '<option value="'+c+'">'+c+' ('+companyTotals[c]+' tickets)</option>'; }).join('');
+  }
+
   var companyColors = ['#4f8ef7','#34d399','#fbbf24','#f87171','#7c5cfc','#22d3ee','#fb923c','#a78bfa','#4ade80','#e879f9'];
-  destroyChart('company');
-  charts['company'] = new Chart(document.getElementById('chart-company'), {
-    type: 'line',
+  window._dashCompanyColors = companyColors;
+
+  // Render inicial empresa
+  updateCompanyChart();
+
+  // Dummy para reemplazar bloque viejo - chart SLA viene abajo
+  var _dummy = {
+    type: 'bar',
+    data: { labels: [], datasets: [] },
+    options: {}
+  };
+
+  // Chart SLA
+  destroyChart('sla');
+  charts['sla'] = new Chart(document.getElementById('chart-sla'), {
+    type: 'bar',
     data: {
       labels: monthLabels,
-      datasets: top10.map(function(c, i) {
-        var color = companyColors[i % companyColors.length];
-        return [
-          {
-            label: c+' (creados)',
-            data: monthKeys.map(function(k){ return companyMonthMap[c][k]?companyMonthMap[c][k].created:0; }),
-            borderColor: color, backgroundColor: 'transparent',
-            borderWidth: 2, borderDash: [],
-            pointRadius: 2, pointBackgroundColor: color,
-            tension: 0.3, fill: false
-          },
-          {
-            label: c+' (resueltos)',
-            data: monthKeys.map(function(k){ return companyMonthMap[c][k]?companyMonthMap[c][k].resolved:0; }),
-            borderColor: color, backgroundColor: 'transparent',
-            borderWidth: 1.5, borderDash: [4,3],
-            pointRadius: 2, pointBackgroundColor: color,
-            tension: 0.3, fill: false
-          }
-        ];
-      }).reduce(function(a,b){ return a.concat(b); }, [])
+      datasets: [
+        {
+          label: 'Within SLA',
+          data: monthKeys.map(function(k){ return slaMonthMap[k]?slaMonthMap[k].within:0; }),
+          backgroundColor: 'rgba(52,211,153,0.8)', stack: 's', borderRadius: 2, borderSkipped: false
+        },
+        {
+          label: 'SLA Violated',
+          data: monthKeys.map(function(k){ return slaMonthMap[k]?slaMonthMap[k].violated:0; }),
+          backgroundColor: 'rgba(248,113,113,0.85)', stack: 's', borderRadius: 2, borderSkipped: false
+        }
+      ]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: {display:false},
-        tooltip: {mode:'index', intersect:false, callbacks:{label:function(ctx){return ' '+ctx.dataset.label+': '+ctx.parsed.y;}}}
-      },
+      plugins: { legend:{display:false}, tooltip:{mode:'index',intersect:false} },
       scales: {
-        x: {ticks:{color:'#555e78',font:{size:11},autoSkip:false,maxRotation:45},grid:{display:false}},
-        y: {beginAtZero:true,ticks:{color:'#555e78',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}}
+        x: {stacked:true, ticks:{color:'#555e78',font:{size:11},autoSkip:false,maxRotation:45}, grid:{display:false}},
+        y: {stacked:true, beginAtZero:true, ticks:{color:'#555e78',font:{size:11}}, grid:{color:'rgba(255,255,255,0.04)'}}
       }
     }
   });
-  document.getElementById('leg-company').innerHTML = top10.map(function(c,i){
-    var color = companyColors[i%companyColors.length];
-    var total = companyTotals[c];
-    var res = tickets.filter(function(t){ return t.company===c&&(t.status==='Resolved'||t.status==='Closed'); }).length;
-    return '<span class="leg"><span class="leg-dot" style="background:'+color+'"></span>'+c+
-      ' <span style="color:var(--text3);font-size:10px">'+total+' creados / '+res+' resueltos</span></span>';
-  }).join('');
 
   var baseOpts = {responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}};
 
@@ -470,6 +501,55 @@ function kpi(label, value, sub, color, style) {
 }
 function leg(color, text) {
   return '<span class="leg"><span class="leg-dot" style="background:'+color+'"></span>'+text+'</span>';
+}
+
+function updateCompanyChart() {
+  var sel = document.getElementById('company-select');
+  if (!sel || !window._dashMonthKeys) return;
+  var c = sel.value;
+  var monthKeys = window._dashMonthKeys;
+  var monthLabels = window._dashMonthLabels;
+  var map = window._dashCompanyMonthMap;
+  var colors = window._dashCompanyColors;
+  var idx = window._dashTop10.indexOf(c);
+  var color = colors[idx >= 0 ? idx : 0];
+
+  var legEl = document.getElementById('leg-company');
+  if (legEl) {
+    var total = window._dashCompanyTotals[c] || 0;
+    var res = monthKeys.reduce(function(s,k){ return s + (map[c]&&map[c][k]?map[c][k].resolved:0); },0);
+    legEl.innerHTML =
+      '<span class="leg"><span class="leg-dot" style="background:'+color+'"></span>Creados ('+total+')</span>'+
+      '<span class="leg"><span class="leg-dot" style="background:rgba(52,211,153,0.8);"></span>Resueltos/Cerrados ('+res+')</span>';
+  }
+
+  destroyChart('company');
+  charts['company'] = new Chart(document.getElementById('chart-company'), {
+    type: 'bar',
+    data: {
+      labels: monthLabels,
+      datasets: [
+        {
+          label: 'Creados',
+          data: monthKeys.map(function(k){ return map[c]&&map[c][k]?map[c][k].created:0; }),
+          backgroundColor: 'rgba(79,142,247,0.75)', borderRadius: 4, borderSkipped: false
+        },
+        {
+          label: 'Resueltos/Cerrados',
+          data: monthKeys.map(function(k){ return map[c]&&map[c][k]?map[c][k].resolved:0; }),
+          backgroundColor: 'rgba(52,211,153,0.75)', borderRadius: 4, borderSkipped: false
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend:{display:false}, tooltip:{mode:'index',intersect:false} },
+      scales: {
+        x: {ticks:{color:'#555e78',font:{size:11},autoSkip:false,maxRotation:45},grid:{display:false}},
+        y: {beginAtZero:true,ticks:{color:'#555e78',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}}
+      }
+    }
+  });
 }
 
 reloadData();
