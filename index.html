@@ -20,43 +20,34 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .refresh-btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all .15s}
 .refresh-btn:hover{background:var(--bg2);color:var(--text);border-color:var(--accent)}
 .main{padding:20px 28px;max-width:1400px;margin:0 auto}
-
-/* Filter bar */
-.filter-bar{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;flex-wrap:wrap;gap:14px}
-.filter-bar label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-right:4px}
-.filter-bar input[type=date]{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;outline:none}
+.filter-bar{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+.filter-bar label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+.filter-bar input[type=date]{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;cursor:pointer}
 .filter-bar input[type=date]:focus{border-color:var(--accent)}
 .filter-sep{color:var(--text3);font-size:13px}
 .filter-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all .15s}
 .filter-btn:hover{border-color:var(--accent);color:var(--accent)}
-.filter-btn.active{background:rgba(79,142,247,0.15);border-color:var(--accent);color:var(--accent)}
 .filter-count{font-size:11px;color:var(--text3);margin-left:auto;font-family:'DM Mono',monospace}
-
-.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:16px}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:50vh;gap:16px}
 .spinner{width:36px;height:36px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading p{color:var(--text2);font-size:13px}
-.error-box{background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px;color:#fca5a5;font-size:13px}
-
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
-.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden;transition:border-color .2s}
-.kpi-card:hover{border-color:var(--border2)}
+.error-box{background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:var(--radius);padding:20px 24px;color:#fca5a5;font-size:13px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin-bottom:20px}
+.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden}
 .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--kpi-color,var(--accent));opacity:.7}
 .kpi-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
 .kpi-value{font-size:26px;font-weight:600;color:var(--text);letter-spacing:-1px;line-height:1}
 .kpi-sub{font-size:11px;color:var(--text2);margin-top:6px}
-
 .section-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;margin-top:24px}
 .charts-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
-.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px}
-.chart-card.full{grid-column:1/-1}
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:14px}
 .chart-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px}
 .chart-sub{font-size:11px;color:var(--text3);margin-bottom:12px}
 .legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
 .leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
 .leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
-
-.table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px}
 table{width:100%;border-collapse:collapse;font-size:13px}
 thead th{padding:10px 14px;text-align:left;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;background:var(--bg3);border-bottom:1px solid var(--border)}
 tbody td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text)}
@@ -67,11 +58,12 @@ tbody tr:hover td{background:var(--bg3)}
 .b-pending{background:rgba(251,191,36,0.15);color:#fcd34d}
 .b-resolved{background:rgba(52,211,153,0.15);color:#6ee7b7}
 .b-closed{background:rgba(52,211,153,0.10);color:#86efac}
-.bar-mini{height:4px;border-radius:2px;margin-top:6px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s ease}
-@media(max-width:900px){.charts-3{grid-template-columns:1fr}.main{padding:16px}.header{padding:14px}.filter-bar{gap:10px}}
+.bar-mini{height:4px;border-radius:2px;margin-top:6px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+@media(max-width:900px){.charts-3{grid-template-columns:1fr}.main{padding:16px}.header{padding:14px}}
 </style>
 </head>
 <body>
+
 <header class="header">
   <div class="header-left">
     <div class="logo">S</div>
@@ -82,250 +74,251 @@ tbody tr:hover td{background:var(--bg3)}
   </div>
   <div style="display:flex;align-items:center;gap:12px">
     <span class="last-update" id="last-update"></span>
-    <button class="refresh-btn" onclick="loadData()">Actualizar</button>
+    <button class="refresh-btn" onclick="reloadData()">Actualizar</button>
   </div>
 </header>
 
-<main class="main" id="main">
-  <div class="loading">
-    <div class="spinner"></div>
-    <p>Cargando datos desde Google Sheets...</p>
+<main class="main">
+  <!-- Filter bar siempre visible -->
+  <div class="filter-bar">
+    <label>Desde</label>
+    <input type="date" id="date-from" onchange="applyFilters()">
+    <span class="filter-sep">→</span>
+    <label>Hasta</label>
+    <input type="date" id="date-to" onchange="applyFilters()">
+    <button class="filter-btn" onclick="setRange(30)">30 dias</button>
+    <button class="filter-btn" onclick="setRange(90)">90 dias</button>
+    <button class="filter-btn" onclick="setRange(180)">6 meses</button>
+    <button class="filter-btn" onclick="setRange(365)">1 ano</button>
+    <button class="filter-btn" onclick="setAll()">Todo</button>
+    <span class="filter-count" id="filter-count"></span>
+  </div>
+
+  <!-- Contenido dinamico -->
+  <div id="dash-content">
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Cargando datos desde Google Sheets...</p>
+    </div>
   </div>
 </main>
 
 <script>
-var SHEET_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vQ1f3IBca3MrvNThStVb46n7VF28EKIWbty36-LX9b7l8FmiCjC5TM_rKL-DS1XWkjdJrISXcGDLDZE/pub?gid=0&single=true&output=csv';
-var allTickets=[];
-var charts={};
+var SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ1f3IBca3MrvNThStVb46n7VF28EKIWbty36-LX9b7l8FmiCjC5TM_rKL-DS1XWkjdJrISXcGDLDZE/pub?gid=0&single=true&output=csv';
+var allTickets = [];
+var charts = {};
 
-function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
 
-function normStatus(s){
-  s=(s||'').trim().toLowerCase();
-  if(s==='open'||s==='2'||s==='abierto')return'Open';
-  if(s==='pending'||s==='3'||s==='pendiente')return'Pending';
-  if(s==='resolved'||s==='4'||s==='resuelto')return'Resolved';
-  if(s==='closed'||s==='5'||s==='cerrado')return'Closed';
-  return s||'Unknown';
+function normStatus(s) {
+  s = (s||'').trim().toLowerCase();
+  if (s==='open'||s==='2'||s==='abierto') return 'Open';
+  if (s==='pending'||s==='3'||s==='pendiente') return 'Pending';
+  if (s==='resolved'||s==='4'||s==='resuelto') return 'Resolved';
+  if (s==='closed'||s==='5'||s==='cerrado') return 'Closed';
+  return s || 'Unknown';
 }
-function normPriority(p){
-  p=(p||'').trim().toLowerCase();
-  if(p==='low'||p==='1'||p==='baja')return'Low';
-  if(p==='medium'||p==='2'||p==='media')return'Medium';
-  if(p==='high'||p==='3'||p==='alta')return'High';
-  if(p==='urgent'||p==='4'||p==='urgente')return'Urgent';
-  return p||'Unknown';
+function normPriority(p) {
+  p = (p||'').trim().toLowerCase();
+  if (p==='low'||p==='1'||p==='baja') return 'Low';
+  if (p==='medium'||p==='2'||p==='media') return 'Medium';
+  if (p==='high'||p==='3'||p==='alta') return 'High';
+  if (p==='urgent'||p==='4'||p==='urgente') return 'Urgent';
+  return p || 'Unknown';
 }
-function badge(text,cls){return'<span class="badge '+cls+'">'+text+'</span>';}
-
-function parseDate(str){
-  if(!str)return null;
-  var d=new Date(str);
-  if(!isNaN(d))return d;
-  // try DD/MM/YYYY
-  var m=str.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
-  if(m)return new Date(m[3],m[2]-1,m[1]);
-  return null;
-}
-
-function getField(row,names){
-  for(var i=0;i<names.length;i++){
-    if(row[names[i]]!==undefined&&row[names[i]]!==null&&row[names[i]]!=='')return row[names[i]];
+function getField(row, names) {
+  for (var i=0; i<names.length; i++) {
+    if (row[names[i]] !== undefined && row[names[i]] !== '') return row[names[i]];
   }
   return '';
 }
+function parseDate(str) {
+  if (!str) return null;
+  var d = new Date(str);
+  if (!isNaN(d)) return d;
+  var m = str.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+  if (m) return new Date(m[3], m[2]-1, m[1]);
+  return null;
+}
+function badge(text, cls) { return '<span class="badge '+cls+'">'+text+'</span>'; }
 
-function loadData(){
-  document.getElementById('main').innerHTML='<div class="loading"><div class="spinner"></div><p>Cargando datos desde Google Sheets...</p></div>';
+function reloadData() {
+  document.getElementById('dash-content').innerHTML = '<div class="loading"><div class="spinner"></div><p>Cargando datos...</p></div>';
   fetch(SHEET_URL)
-    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
-    .then(function(csv){
-      var results=Papa.parse(csv,{header:true,skipEmptyLines:true});
-      if(!results.data||results.data.length===0){showError('No se encontraron datos.');return;}
-      allTickets=results.data.map(function(r){
-        var statusRaw=getField(r,['Estado','Status','estado','status']);
-        var prioRaw=getField(r,['Prioridad','Priority','prioridad','priority']);
-        var agentRaw=getField(r,['Agente','Agent','agente','agent','Assigned To']);
-        var createdRaw=getField(r,['Tiempo de creacion','Tiempo de creación','Created At','created_at','Fecha de creacion']);
-        var resolveHRaw=getField(r,['Tiempo de resolucion (en horas)','Tiempo de resolución (en horas)','Resolution Time (in hrs)','resolution_time_in_hours','Tiempo de Resolucion']);
-        var firstRespHRaw=getField(r,['Primer tiempo de respuesta (en horas)','First Response Time (in hrs)','first_response_time_in_hours']);
-        var overdueRaw=getField(r,['Vencidas hasta ahora','Is Overdue','overdue','Vencido']);
-        return{
-          status:normStatus(statusRaw),
-          priority:normPriority(prioRaw),
-          agent:(agentRaw||'Sin asignar').trim(),
-          created:parseDate(createdRaw),
-          resolveH:parseFloat(resolveHRaw)||null,
-          firstRespH:parseFloat(firstRespHRaw)||null,
-          overdue:(overdueRaw||'').toLowerCase()==='yes'||(overdueRaw||'').toLowerCase()==='si'||(overdueRaw||'').toLowerCase()==='true'
+    .then(function(r) { if (!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
+    .then(function(csv) {
+      var results = Papa.parse(csv, { header:true, skipEmptyLines:true });
+      if (!results.data || results.data.length === 0) {
+        document.getElementById('dash-content').innerHTML = '<div class="error-box">No se encontraron datos en la planilla.</div>';
+        return;
+      }
+      allTickets = results.data.map(function(r) {
+        return {
+          status:    normStatus(getField(r, ['Estado','Status'])),
+          priority:  normPriority(getField(r, ['Prioridad','Priority'])),
+          agent:     (getField(r, ['Agente','Agent','Assigned To']) || 'Sin asignar').trim(),
+          created:   parseDate(getField(r, ['Tiempo de creacion','Tiempo de creación','Created At','created_at'])),
+          resolveH:  parseFloat(getField(r, ['Tiempo de resolucion (en horas)','Tiempo de resolución (en horas)','Resolution Time (in hrs)'])) || null,
+          firstRespH:parseFloat(getField(r, ['Primer tiempo de respuesta (en horas)','First Response Time (in hrs)'])) || null,
+          overdue:   ['yes','si','sí','true'].indexOf((getField(r,['Vencidas hasta ahora','Is Overdue'])||'').toLowerCase()) >= 0
         };
       });
-      // Set default date range: min and max from data
-      var validDates=allTickets.filter(function(t){return t.created&&!isNaN(t.created);}).map(function(t){return t.created;});
-      if(validDates.length){
-        var minD=new Date(Math.min.apply(null,validDates));
-        var maxD=new Date(Math.max.apply(null,validDates));
-        document.getElementById('date-from').value=minD.toISOString().slice(0,10);
-        document.getElementById('date-to').value=maxD.toISOString().slice(0,10);
-      }
-      document.getElementById('last-update').textContent='Actualizado '+new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
-      applyFilters();
+      // Set date range to full range
+      setAll();
+      document.getElementById('last-update').textContent = 'Actualizado ' + new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
     })
-    .catch(function(err){showError('Error al conectar con Google Sheets: '+err.message);});
+    .catch(function(err) {
+      document.getElementById('dash-content').innerHTML = '<div class="error-box">Error al conectar con Google Sheets: '+err.message+'</div>';
+    });
 }
 
-function showError(msg){
-  document.getElementById('main').innerHTML='<div class="error-box">Error: '+msg+'</div>';
-}
-
-function applyFilters(){
-  var fromVal=document.getElementById('date-from').value;
-  var toVal=document.getElementById('date-to').value;
-  var from=fromVal?new Date(fromVal):null;
-  var to=toVal?new Date(toVal+'T23:59:59'):null;
-  var filtered=allTickets.filter(function(t){
-    if(!t.created||isNaN(t.created))return true;
-    if(from&&t.created<from)return false;
-    if(to&&t.created>to)return false;
-    return true;
-  });
-  document.getElementById('filter-count').textContent=filtered.length+' de '+allTickets.length+' tickets';
-  renderDashboard(filtered);
-}
-
-function setQuickRange(days){
-  var to=new Date();
-  var from=new Date();
-  from.setDate(from.getDate()-days);
-  document.getElementById('date-from').value=from.toISOString().slice(0,10);
-  document.getElementById('date-to').value=to.toISOString().slice(0,10);
+function setAll() {
+  var valid = allTickets.filter(function(t){ return t.created && !isNaN(t.created); }).map(function(t){ return t.created.getTime(); });
+  if (valid.length) {
+    document.getElementById('date-from').value = new Date(Math.min.apply(null,valid)).toISOString().slice(0,10);
+    document.getElementById('date-to').value   = new Date(Math.max.apply(null,valid)).toISOString().slice(0,10);
+  }
   applyFilters();
 }
 
-function renderDashboard(tickets){
-  var total=tickets.length;
-  var open=tickets.filter(function(t){return t.status==='Open';}).length;
-  var pending=tickets.filter(function(t){return t.status==='Pending';}).length;
-  var resolved=tickets.filter(function(t){return t.status==='Resolved';}).length;
-  var closed=tickets.filter(function(t){return t.status==='Closed';}).length;
-  var overdue=tickets.filter(function(t){return t.overdue;}).length;
-  var withRes=tickets.filter(function(t){return t.resolveH&&t.resolveH>0;});
-  var avgRes=withRes.length?(withRes.reduce(function(s,t){return s+t.resolveH;},0)/withRes.length):0;
-  var withResp=tickets.filter(function(t){return t.firstRespH&&t.firstRespH>0;});
-  var avgResp=withResp.length?(withResp.reduce(function(s,t){return s+t.firstRespH;},0)/withResp.length):0;
+function setRange(days) {
+  var to = new Date();
+  var from = new Date();
+  from.setDate(from.getDate() - days);
+  document.getElementById('date-from').value = from.toISOString().slice(0,10);
+  document.getElementById('date-to').value   = to.toISOString().slice(0,10);
+  applyFilters();
+}
+
+function applyFilters() {
+  var fromVal = document.getElementById('date-from').value;
+  var toVal   = document.getElementById('date-to').value;
+  var from = fromVal ? new Date(fromVal) : null;
+  var to   = toVal   ? new Date(toVal+'T23:59:59') : null;
+  var filtered = allTickets.filter(function(t) {
+    if (!t.created || isNaN(t.created)) return true;
+    if (from && t.created < from) return false;
+    if (to   && t.created > to)   return false;
+    return true;
+  });
+  document.getElementById('filter-count').textContent = filtered.length + ' de ' + allTickets.length + ' tickets';
+  renderDashboard(filtered);
+}
+
+function renderDashboard(tickets) {
+  var total    = tickets.length;
+  var open     = tickets.filter(function(t){ return t.status==='Open'; }).length;
+  var pending  = tickets.filter(function(t){ return t.status==='Pending'; }).length;
+  var resolved = tickets.filter(function(t){ return t.status==='Resolved'; }).length;
+  var closed   = tickets.filter(function(t){ return t.status==='Closed'; }).length;
+  var overdue  = tickets.filter(function(t){ return t.overdue; }).length;
+  var withRes  = tickets.filter(function(t){ return t.resolveH && t.resolveH>0; });
+  var avgRes   = withRes.length ? withRes.reduce(function(s,t){ return s+t.resolveH; },0)/withRes.length : 0;
+  var withResp = tickets.filter(function(t){ return t.firstRespH && t.firstRespH>0; });
+  var avgResp  = withResp.length ? withResp.reduce(function(s,t){ return s+t.firstRespH; },0)/withResp.length : 0;
 
   // Agent stats
-  var agentMap={};
-  tickets.forEach(function(t){
-    if(!agentMap[t.agent])agentMap[t.agent]={name:t.agent,total:0,open:0,resolved:0,resH:[],respH:[]};
+  var agentMap = {};
+  tickets.forEach(function(t) {
+    if (!agentMap[t.agent]) agentMap[t.agent] = {name:t.agent,total:0,open:0,resolved:0,resH:[],respH:[]};
     agentMap[t.agent].total++;
-    if(t.status==='Open')agentMap[t.agent].open++;
-    if(t.status==='Resolved'||t.status==='Closed')agentMap[t.agent].resolved++;
-    if(t.resolveH&&t.resolveH>0)agentMap[t.agent].resH.push(t.resolveH);
-    if(t.firstRespH&&t.firstRespH>0)agentMap[t.agent].respH.push(t.firstRespH);
+    if (t.status==='Open') agentMap[t.agent].open++;
+    if (t.status==='Resolved'||t.status==='Closed') agentMap[t.agent].resolved++;
+    if (t.resolveH  && t.resolveH>0)  agentMap[t.agent].resH.push(t.resolveH);
+    if (t.firstRespH && t.firstRespH>0) agentMap[t.agent].respH.push(t.firstRespH);
   });
-  var agents=Object.values(agentMap).sort(function(a,b){return b.total-a.total;}).slice(0,10);
-  agents.forEach(function(a){
-    a.avgRes=a.resH.length?Math.round(a.resH.reduce(function(s,v){return s+v;},0)/a.resH.length):null;
-    a.avgResp=a.respH.length?Math.round(a.respH.reduce(function(s,v){return s+v;},0)/a.respH.length):null;
+  var agents = Object.values(agentMap).sort(function(a,b){ return b.total-a.total; }).slice(0,10);
+  agents.forEach(function(a) {
+    a.avgRes  = a.resH.length  ? Math.round(a.resH.reduce(function(s,v){  return s+v; },0)/a.resH.length)  : null;
+    a.avgResp = a.respH.length ? Math.round(a.respH.reduce(function(s,v){ return s+v; },0)/a.respH.length) : null;
   });
 
-  // Monthly data
-  var monthMap={};
-  tickets.forEach(function(t){
-    if(!t.created||isNaN(t.created))return;
-    var key=t.created.getFullYear()+'-'+(String(t.created.getMonth()+1).padStart(2,'0'));
-    if(!monthMap[key])monthMap[key]={open:0,pending:0,resolved:0,closed:0,total:0};
-    monthMap[key][t.status.toLowerCase()]=(monthMap[key][t.status.toLowerCase()]||0)+1;
+  // Monthly breakdown
+  var monthMap = {};
+  tickets.forEach(function(t) {
+    if (!t.created || isNaN(t.created)) return;
+    var key = t.created.getFullYear()+'-'+String(t.created.getMonth()+1).padStart(2,'0');
+    if (!monthMap[key]) monthMap[key] = {open:0,pending:0,resolved:0,closed:0,total:0};
+    var s = t.status.toLowerCase();
+    if (monthMap[key][s] !== undefined) monthMap[key][s]++;
     monthMap[key].total++;
   });
-  var monthKeys=Object.keys(monthMap).sort();
-  var monthLabels=monthKeys.map(function(k){
-    var parts=k.split('-');
-    var d=new Date(parts[0],parts[1]-1,1);
-    return d.toLocaleDateString('es-CL',{month:'short',year:'2-digit'});
+  var monthKeys   = Object.keys(monthMap).sort();
+  var monthLabels = monthKeys.map(function(k) {
+    var p = k.split('-');
+    return new Date(p[0], p[1]-1, 1).toLocaleDateString('es-CL',{month:'short',year:'2-digit'});
   });
 
-  // Status & priority counts
-  var statuses=['Open','Pending','Resolved','Closed'];
-  var priorities=['Urgent','High','Medium','Low'];
-  var statusColors=['#4f8ef7','#fbbf24','#34d399','#22d3ee'];
-  var prioColors=['#f87171','#fbbf24','#4f8ef7','#8b92a8'];
-  var agentColors=['#4f8ef7','#7c5cfc','#34d399','#fbbf24','#f87171','#22d3ee','#a78bfa','#fb923c','#4ade80','#e879f9'];
-  var statusCounts=statuses.map(function(s){return tickets.filter(function(t){return t.status===s;}).length;});
-  var prioCounts=priorities.map(function(p){return tickets.filter(function(t){return t.priority===p;}).length;});
+  var statuses     = ['Open','Pending','Resolved','Closed'];
+  var priorities   = ['Urgent','High','Medium','Low'];
+  var statusColors = ['#4f8ef7','#fbbf24','#34d399','#22d3ee'];
+  var prioColors   = ['#f87171','#fbbf24','#4f8ef7','#8b92a8'];
+  var agentColors  = ['#4f8ef7','#7c5cfc','#34d399','#fbbf24','#f87171','#22d3ee','#a78bfa','#fb923c','#4ade80','#e879f9'];
+  var statusCounts = statuses.map(function(s){ return tickets.filter(function(t){ return t.status===s; }).length; });
+  var prioCounts   = priorities.map(function(p){ return tickets.filter(function(t){ return t.priority===p; }).length; });
+  var maxTotal     = Math.max.apply(null, agents.map(function(a){ return a.total; }).concat([1]));
 
-  var maxTotal=Math.max.apply(null,agents.map(function(a){return a.total;}).concat([1]));
-  var agentRows=agents.map(function(a){
-    return'<tr><td style="font-weight:500">'+a.name+'</td><td>'+a.total+'</td><td>'+badge(a.open,'b-open')+'</td><td style="color:var(--green)">'+a.resolved+'</td><td style="font-family:DM Mono,monospace;color:var(--teal)">'+(a.avgRes!==null?a.avgRes+'h':'—')+'</td><td style="font-family:DM Mono,monospace;color:var(--accent2)">'+(a.avgResp!==null?a.avgResp+'h':'—')+'</td><td style="min-width:80px"><div style="font-size:11px;color:var(--text3)">'+Math.round(a.total/maxTotal*100)+'%</div><div class="bar-mini" style="width:'+Math.round(a.total/maxTotal*100)+'%"></div></td></tr>';
+  var agentRows = agents.map(function(a) {
+    return '<tr>'+
+      '<td style="font-weight:500">'+a.name+'</td>'+
+      '<td>'+a.total+'</td>'+
+      '<td>'+badge(a.open,'b-open')+'</td>'+
+      '<td style="color:var(--green)">'+a.resolved+'</td>'+
+      '<td style="font-family:DM Mono,monospace;color:var(--teal)">'+(a.avgRes!==null?a.avgRes+'h':'—')+'</td>'+
+      '<td style="font-family:DM Mono,monospace;color:var(--accent2)">'+(a.avgResp!==null?a.avgResp+'h':'—')+'</td>'+
+      '<td style="min-width:80px"><div style="font-size:11px;color:var(--text3)">'+Math.round(a.total/maxTotal*100)+'%</div><div class="bar-mini" style="width:'+Math.round(a.total/maxTotal*100)+'%"></div></td>'+
+    '</tr>';
   }).join('');
 
-  // Build HTML (preserve filter bar)
-  var filterBar=document.getElementById('filter-bar-wrap')?document.getElementById('filter-bar-wrap').outerHTML:buildFilterBar();
-
-  document.getElementById('main').innerHTML=
-    filterBar+
+  document.getElementById('dash-content').innerHTML =
     '<div class="kpi-grid">'+
-      '<div class="kpi-card" style="--kpi-color:#4f8ef7"><div class="kpi-label">Total tickets</div><div class="kpi-value">'+total+'</div><div class="kpi-sub">en el periodo</div></div>'+
-      '<div class="kpi-card" style="--kpi-color:#4f8ef7"><div class="kpi-label">Abiertos</div><div class="kpi-value" style="color:var(--accent)">'+open+'</div><div class="kpi-sub">'+(total>0?Math.round(open/total*100):0)+'% del total</div></div>'+
-      '<div class="kpi-card" style="--kpi-color:#fbbf24"><div class="kpi-label">Pendientes</div><div class="kpi-value" style="color:var(--amber)">'+pending+'</div><div class="kpi-sub">en espera</div></div>'+
-      '<div class="kpi-card" style="--kpi-color:#34d399"><div class="kpi-label">Resueltos</div><div class="kpi-value" style="color:var(--green)">'+resolved+'</div><div class="kpi-sub">'+(total>0?Math.round(resolved/total*100):0)+'% del total</div></div>'+
-      '<div class="kpi-card" style="--kpi-color:#22d3ee"><div class="kpi-label">Cerrados</div><div class="kpi-value" style="color:var(--teal)">'+closed+'</div><div class="kpi-sub">'+(total>0?Math.round(closed/total*100):0)+'% del total</div></div>'+
-      '<div class="kpi-card" style="--kpi-color:#f87171"><div class="kpi-label">Vencidos</div><div class="kpi-value" style="color:var(--red)">'+overdue+'</div><div class="kpi-sub">SLA incumplido</div></div>'+
-      '<div class="kpi-card" style="--kpi-color:#22d3ee"><div class="kpi-label">Tiempo res. prom.</div><div class="kpi-value" style="color:var(--teal)">'+(avgRes>0?avgRes.toFixed(1)+'h':'N/A')+'</div><div class="kpi-sub">promedio</div></div>'+
-      '<div class="kpi-card" style="--kpi-color:#7c5cfc"><div class="kpi-label">1a resp. prom.</div><div class="kpi-value" style="color:var(--accent2)">'+(avgResp>0?avgResp.toFixed(1)+'h':'N/A')+'</div><div class="kpi-sub">primera respuesta</div></div>'+
+      kpi('Total tickets', total, 'en el periodo', '#4f8ef7', '')+
+      kpi('Abiertos', open, (total?Math.round(open/total*100):0)+'% del total', '#4f8ef7', 'color:var(--accent)')+
+      kpi('Pendientes', pending, 'en espera', '#fbbf24', 'color:var(--amber)')+
+      kpi('Resueltos', resolved, (total?Math.round(resolved/total*100):0)+'% del total', '#34d399', 'color:var(--green)')+
+      kpi('Cerrados', closed, (total?Math.round(closed/total*100):0)+'% del total', '#22d3ee', 'color:var(--teal)')+
+      kpi('Vencidos', overdue, 'SLA incumplido', '#f87171', 'color:var(--red)')+
+      kpi('Tiempo res. prom.', avgRes>0?avgRes.toFixed(1)+'h':'N/A', 'promedio', '#22d3ee', 'color:var(--teal)')+
+      kpi('1a resp. prom.', avgResp>0?avgResp.toFixed(1)+'h':'N/A', 'primera respuesta', '#7c5cfc', 'color:var(--accent2)')+
     '</div>'+
-
     '<p class="section-title">Tickets por mes — estado</p>'+
-    '<div class="chart-card full" style="margin-bottom:14px">'+
+    '<div class="chart-card">'+
       '<div class="chart-title">Volumen mensual por estado</div>'+
-      '<div class="chart-sub">Barras apiladas: Open / Pending / Resolved / Closed · Linea: total del mes</div>'+
-      '<div id="leg-monthly" class="legend"></div>'+
+      '<div class="chart-sub">Barras apiladas: Open / Pending / Resolved / Closed · Linea punteada: total del mes</div>'+
+      '<div class="legend">'+
+        leg('#4f8ef7','Open')+leg('#fbbf24','Pending')+leg('#34d399','Resolved')+leg('#22d3ee','Closed')+
+        '<span class="leg"><span class="leg-dot" style="background:#e2e8f0;border-radius:50%"></span>Total</span>'+
+      '</div>'+
       '<div style="position:relative;height:280px"><canvas id="chart-monthly"></canvas></div>'+
     '</div>'+
-
     '<p class="section-title">Distribucion</p>'+
     '<div class="charts-3">'+
-      '<div class="chart-card"><div class="chart-title">Por estado</div><div class="chart-sub">Periodo seleccionado</div><div id="leg-status" class="legend"></div><div style="position:relative;height:190px"><canvas id="chart-status"></canvas></div></div>'+
-      '<div class="chart-card"><div class="chart-title">Por prioridad</div><div class="chart-sub">Nivel de urgencia</div><div id="leg-prio" class="legend"></div><div style="position:relative;height:190px"><canvas id="chart-prio"></canvas></div></div>'+
-      '<div class="chart-card"><div class="chart-title">Por agente</div><div class="chart-sub">Top agentes</div><div style="position:relative;height:190px"><canvas id="chart-agent"></canvas></div></div>'+
+      '<div class="chart-card" style="margin-bottom:0"><div class="chart-title">Por estado</div><div class="chart-sub">Periodo seleccionado</div><div id="leg-status" class="legend"></div><div style="position:relative;height:190px"><canvas id="chart-status"></canvas></div></div>'+
+      '<div class="chart-card" style="margin-bottom:0"><div class="chart-title">Por prioridad</div><div class="chart-sub">Nivel de urgencia</div><div id="leg-prio" class="legend"></div><div style="position:relative;height:190px"><canvas id="chart-prio"></canvas></div></div>'+
+      '<div class="chart-card" style="margin-bottom:0"><div class="chart-title">Por agente</div><div class="chart-sub">Top agentes</div><div style="position:relative;height:190px"><canvas id="chart-agent"></canvas></div></div>'+
     '</div>'+
-
     '<p class="section-title">Resumen por agente</p>'+
     '<div class="table-wrap"><table><thead><tr><th>Agente</th><th>Total</th><th>Abiertos</th><th>Resueltos</th><th>Tiempo res.</th><th>1a resp.</th><th>Carga</th></tr></thead><tbody>'+agentRows+'</tbody></table></div>';
 
-  // Re-attach filter events
-  attachFilterEvents();
-
-  // Chart: monthly stacked + line
-  var monthlyOpen=monthKeys.map(function(k){return monthMap[k].open||0;});
-  var monthlyPending=monthKeys.map(function(k){return monthMap[k].pending||0;});
-  var monthlyResolved=monthKeys.map(function(k){return monthMap[k].resolved||0;});
-  var monthlyClosed=monthKeys.map(function(k){return monthMap[k].closed||0;});
-  var monthlyTotal=monthKeys.map(function(k){return monthMap[k].total||0;});
-
-  document.getElementById('leg-monthly').innerHTML=
-    '<span class="leg"><span class="leg-dot" style="background:#4f8ef7"></span>Open</span>'+
-    '<span class="leg"><span class="leg-dot" style="background:#fbbf24"></span>Pending</span>'+
-    '<span class="leg"><span class="leg-dot" style="background:#34d399"></span>Resolved</span>'+
-    '<span class="leg"><span class="leg-dot" style="background:#22d3ee"></span>Closed</span>'+
-    '<span class="leg"><span class="leg-dot" style="background:#e2e8f0;border-radius:50%"></span>Total (linea)</span>';
-
+  // Chart monthly
   destroyChart('monthly');
-  charts['monthly']=new Chart(document.getElementById('chart-monthly'),{
-    data:{
-      labels:monthLabels,
-      datasets:[
-        {type:'bar',label:'Open',data:monthlyOpen,backgroundColor:'rgba(79,142,247,0.75)',stack:'s',borderRadius:2,borderSkipped:false},
-        {type:'bar',label:'Pending',data:monthlyPending,backgroundColor:'rgba(251,191,36,0.75)',stack:'s',borderRadius:2,borderSkipped:false},
-        {type:'bar',label:'Resolved',data:monthlyResolved,backgroundColor:'rgba(52,211,153,0.75)',stack:'s',borderRadius:2,borderSkipped:false},
-        {type:'bar',label:'Closed',data:monthlyClosed,backgroundColor:'rgba(34,211,238,0.75)',stack:'s',borderRadius:2,borderSkipped:false},
-        {type:'line',label:'Total',data:monthlyTotal,borderColor:'#e2e8f0',backgroundColor:'transparent',pointRadius:4,pointBackgroundColor:'#e2e8f0',pointBorderColor:'#0f1117',pointBorderWidth:2,tension:0.3,borderWidth:2,yAxisID:'y2',borderDash:[4,3]}
+  charts['monthly'] = new Chart(document.getElementById('chart-monthly'), {
+    data: {
+      labels: monthLabels,
+      datasets: [
+        {type:'bar',  label:'Open',    data:monthKeys.map(function(k){return monthMap[k].open||0;}),    backgroundColor:'rgba(79,142,247,0.75)', stack:'s', borderRadius:2, borderSkipped:false},
+        {type:'bar',  label:'Pending', data:monthKeys.map(function(k){return monthMap[k].pending||0;}), backgroundColor:'rgba(251,191,36,0.75)', stack:'s', borderRadius:2, borderSkipped:false},
+        {type:'bar',  label:'Resolved',data:monthKeys.map(function(k){return monthMap[k].resolved||0;}),backgroundColor:'rgba(52,211,153,0.75)',  stack:'s', borderRadius:2, borderSkipped:false},
+        {type:'bar',  label:'Closed',  data:monthKeys.map(function(k){return monthMap[k].closed||0;}),  backgroundColor:'rgba(34,211,238,0.75)',  stack:'s', borderRadius:2, borderSkipped:false},
+        {type:'line', label:'Total',   data:monthKeys.map(function(k){return monthMap[k].total||0;}),
+          borderColor:'#e2e8f0', backgroundColor:'transparent', borderDash:[4,3], borderWidth:2,
+          pointRadius:4, pointBackgroundColor:'#e2e8f0', pointBorderColor:'#0f1117', pointBorderWidth:2,
+          tension:0.3, yAxisID:'y2'}
       ]
     },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{mode:'index',intersect:false}},
       scales:{
         x:{ticks:{color:'#555e78',font:{size:11},autoSkip:false,maxRotation:45},grid:{display:false}},
         y:{stacked:true,beginAtZero:true,ticks:{color:'#555e78',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}},
@@ -334,54 +327,54 @@ function renderDashboard(tickets){
     }
   });
 
-  var opts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}};
+  var baseOpts = {responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}};
+
   destroyChart('status');
-  charts['status']=new Chart(document.getElementById('chart-status'),{type:'doughnut',data:{labels:statuses,datasets:[{data:statusCounts,backgroundColor:statusColors,borderWidth:0,hoverOffset:4}]},options:Object.assign({},opts,{cutout:'65%'})});
-  document.getElementById('leg-status').innerHTML=statuses.map(function(s,i){return'<span class="leg"><span class="leg-dot" style="background:'+statusColors[i]+'"></span>'+s+' ('+statusCounts[i]+')</span>';}).join('');
+  charts['status'] = new Chart(document.getElementById('chart-status'), {
+    type:'doughnut',
+    data:{labels:statuses, datasets:[{data:statusCounts, backgroundColor:statusColors, borderWidth:0, hoverOffset:4}]},
+    options: Object.assign({}, baseOpts, {cutout:'65%'})
+  });
+  document.getElementById('leg-status').innerHTML = statuses.map(function(s,i){
+    return leg(statusColors[i], s+' ('+statusCounts[i]+')');
+  }).join('');
 
   destroyChart('prio');
-  charts['prio']=new Chart(document.getElementById('chart-prio'),{type:'doughnut',data:{labels:priorities,datasets:[{data:prioCounts,backgroundColor:prioColors,borderWidth:0,hoverOffset:4}]},options:Object.assign({},opts,{cutout:'65%'})});
-  document.getElementById('leg-prio').innerHTML=priorities.map(function(p,i){return'<span class="leg"><span class="leg-dot" style="background:'+prioColors[i]+'"></span>'+p+' ('+prioCounts[i]+')</span>';}).join('');
+  charts['prio'] = new Chart(document.getElementById('chart-prio'), {
+    type:'doughnut',
+    data:{labels:priorities, datasets:[{data:prioCounts, backgroundColor:prioColors, borderWidth:0, hoverOffset:4}]},
+    options: Object.assign({}, baseOpts, {cutout:'65%'})
+  });
+  document.getElementById('leg-prio').innerHTML = priorities.map(function(p,i){
+    return leg(prioColors[i], p+' ('+prioCounts[i]+')');
+  }).join('');
 
   destroyChart('agent');
-  charts['agent']=new Chart(document.getElementById('chart-agent'),{type:'bar',data:{labels:agents.slice(0,8).map(function(a){return a.name.split(' ')[0];}),datasets:[{data:agents.slice(0,8).map(function(a){return a.total;}),backgroundColor:agentColors,borderRadius:4,borderSkipped:false}]},options:Object.assign({},opts,{scales:{x:{ticks:{color:'#555e78',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#555e78',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}}}})});
+  charts['agent'] = new Chart(document.getElementById('chart-agent'), {
+    type:'bar',
+    data:{
+      labels: agents.slice(0,8).map(function(a){ return a.name.split(' ')[0]; }),
+      datasets:[{data:agents.slice(0,8).map(function(a){ return a.total; }), backgroundColor:agentColors, borderRadius:4, borderSkipped:false}]
+    },
+    options: Object.assign({}, baseOpts, {scales:{
+      x:{ticks:{color:'#555e78',font:{size:10}},grid:{display:false}},
+      y:{ticks:{color:'#555e78',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}}
+    }})
+  });
 }
 
-function buildFilterBar(){
-  return'<div id="filter-bar-wrap"><div class="filter-bar">'+
-    '<label>Desde</label><input type="date" id="date-from">'+
-    '<span class="filter-sep">→</span>'+
-    '<label>Hasta</label><input type="date" id="date-to">'+
-    '<button class="filter-btn" onclick="setQuickRange(30)">30 dias</button>'+
-    '<button class="filter-btn" onclick="setQuickRange(90)">90 dias</button>'+
-    '<button class="filter-btn" onclick="setQuickRange(180)">6 meses</button>'+
-    '<button class="filter-btn" onclick="setQuickRange(365)">1 ano</button>'+
-    '<button class="filter-btn active" onclick="resetDates()">Todo</button>'+
-    '<span class="filter-count" id="filter-count"></span>'+
-  '</div></div>';
+function kpi(label, value, sub, color, style) {
+  return '<div class="kpi-card" style="--kpi-color:'+color+'">'+
+    '<div class="kpi-label">'+label+'</div>'+
+    '<div class="kpi-value" style="'+style+'">'+value+'</div>'+
+    '<div class="kpi-sub">'+sub+'</div>'+
+  '</div>';
+}
+function leg(color, text) {
+  return '<span class="leg"><span class="leg-dot" style="background:'+color+'"></span>'+text+'</span>';
 }
 
-function attachFilterEvents(){
-  var df=document.getElementById('date-from');
-  var dt=document.getElementById('date-to');
-  if(df)df.addEventListener('change',applyFilters);
-  if(dt)dt.addEventListener('change',applyFilters);
-}
-
-function resetDates(){
-  var validDates=allTickets.filter(function(t){return t.created&&!isNaN(t.created);}).map(function(t){return t.created;});
-  if(validDates.length){
-    document.getElementById('date-from').value=new Date(Math.min.apply(null,validDates)).toISOString().slice(0,10);
-    document.getElementById('date-to').value=new Date(Math.max.apply(null,validDates)).toISOString().slice(0,10);
-  }
-  applyFilters();
-}
-
-document.addEventListener('DOMContentLoaded',function(){
-  document.getElementById('main').innerHTML=buildFilterBar()+'<div class="loading"><div class="spinner"></div><p>Cargando datos desde Google Sheets...</p></div>';
-  attachFilterEvents();
-  loadData();
-});
+reloadData();
 </script>
 </body>
 </html>
