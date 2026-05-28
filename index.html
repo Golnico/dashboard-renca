@@ -377,10 +377,11 @@ function resetDates(){
   applyFilters();
 }
 
-// Init: render filter bar first so inputs exist before loadData runs
-document.getElementById('main').innerHTML=buildFilterBar()+'<div class="loading"><div class="spinner"></div><p>Cargando datos desde Google Sheets...</p></div>';
-attachFilterEvents();
-loadData();
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('main').innerHTML=buildFilterBar()+'<div class="loading"><div class="spinner"></div><p>Cargando datos desde Google Sheets...</p></div>';
+  attachFilterEvents();
+  loadData();
+});
 </script>
 </body>
 </html>
