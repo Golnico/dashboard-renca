@@ -242,7 +242,10 @@ function renderDashboard(tickets) {
     if (t.resolveH  && t.resolveH>0)  agentMap[t.agent].resH.push(t.resolveH);
     if (t.firstRespH && t.firstRespH>0) agentMap[t.agent].respH.push(t.firstRespH);
   });
-  var agents = Object.values(agentMap).sort(function(a,b){ return b.total-a.total; }).slice(0,10);
+  var agents = Object.values(agentMap).filter(function(a){
+    var n = a.name.toLowerCase();
+    return n !== 'sin asignar' && n !== 'no agent' && n !== '' && n !== '-';
+  }).sort(function(a,b){ return b.total-a.total; }).slice(0,10);
   agents.forEach(function(a) {
     a.avgRes  = a.resH.length  ? Math.round(a.resH.reduce(function(s,v){  return s+v; },0)/a.resH.length)  : null;
     a.avgResp = a.respH.length ? Math.round(a.respH.reduce(function(s,v){ return s+v; },0)/a.respH.length) : null;
