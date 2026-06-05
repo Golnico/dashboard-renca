@@ -706,6 +706,24 @@ function renderCompanyCards(agentName) {
       '<div class="company-card-bar"><div class="company-card-bar-fill" style="width:'+pct+'%"></div></div>'+
     '</div>';
   }).join('');
+
+  // Asignar expand/colapso a cada tarjeta
+  setTimeout(function(){
+    var cards = document.querySelectorAll('#company-cards-grid .company-card');
+    cards.forEach(function(card) {
+      card.addEventListener('click', function() {
+        var list = card.querySelector('.ticket-list');
+        var hint = card.querySelector('.expand-hint');
+        if (!list) return;
+        var isOpen = list.style.display === 'flex';
+        list.style.display = isOpen ? 'none' : 'flex';
+        list.style.flexDirection = 'column';
+        list.style.gap = '6px';
+        if (hint) hint.textContent = isOpen ? '▼ clic para ver tickets' : '▲ clic para cerrar';
+        card.style.borderColor = isOpen ? '' : 'var(--accent)';
+      });
+    });
+  }, 0);
 }
 
 reloadData();
