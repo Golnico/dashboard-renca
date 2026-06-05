@@ -79,6 +79,17 @@ tbody tr:hover td{background:var(--bg3)}
 .company-card-bar{height:3px;position:absolute;bottom:0;left:0;right:0;background:var(--border)}
 .company-card-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s}
 .no-tickets{text-align:center;padding:40px;color:var(--text3);font-size:13px;grid-column:1/-1}
+.company-card{cursor:pointer}
+.company-card.expanded{border-color:var(--accent)}
+.ticket-list{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:none;flex-direction:column;gap:6px;max-height:260px;overflow-y:auto}
+.company-card.expanded .ticket-list{display:flex}
+.ticket-item{background:var(--bg3);border-radius:6px;padding:8px 10px;font-size:11px}
+.ticket-item-top{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.ticket-id{font-family:'DM Mono',monospace;color:var(--accent);font-weight:500;flex-shrink:0}
+.ticket-status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.ticket-subject{color:var(--text);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ticket-contact{color:var(--text3);font-size:11px;margin-top:2px}
+.expand-hint{font-size:10px;color:var(--text3);margin-top:8px;text-align:center}
 </style>
 </head>
 <body>
@@ -180,6 +191,9 @@ function reloadData() {
           agent:     (getField(r, ['Agente','Agent','Assigned To']) || 'Sin asignar').trim(),
           created:   parseDate(getField(r, ['Tiempo de creacion','Tiempo de creación','Created At','created_at'])),
           company:   (getField(r, ['Nombre de la empresa','Company Name','company','empresa']) || 'Sin empresa').trim(),
+          ticketId:  getField(r, ['ID del ticket','Ticket ID','id','ID']),
+          subject:   getField(r, ['Asunto','Subject','subject','asunto']),
+          contact:   getField(r, ['Nombre completo','Full Name','Contact Name','nombre completo']),
           resolveH:  parseFloat(getField(r, ['Tiempo de resolucion (en horas)','Tiempo de resolución (en horas)','Resolution Time (in hrs)'])) || null,
           firstRespH:parseFloat(getField(r, ['Primer tiempo de respuesta (en horas)','First Response Time (in hrs)'])) || null,
           slaStatus: (getField(r,['Estado de resolucion','Estado de resolución','Resolution Status','resolution_status'])||'').trim(),
@@ -452,9 +466,8 @@ function renderDashboard(tickets) {
   // Render inicial empresa
   updateCompanyChart();
 
-  // Inicializar panel de agente con el primero
+  // Inicializar panel de agente
   renderAgentBtns();
-  if (agents.length > 0) renderCompanyCards(agents[0].name);
 
   // Dummy para reemplazar bloque viejo - chart SLA viene abajo
   var _dummy = {
@@ -590,22 +603,33 @@ function updateCompanyChart() {
 
 function renderAgentBtns() {
   var agents = window._dashAgents || [];
+  var tickets = window._dashTickets || [];
+  // Solo agentes con tickets activos
+  var activeAgents = agents.filter(function(a) {
+    return tickets.some(function(t) {
+      return t.agent === a.name && (t.status === 'Open' || t.status === 'Pending');
+    });
+  });
   var row = document.getElementById('agent-btn-row');
   if (!row) return;
-  row.innerHTML = agents.map(function(a, i) {
+  if (activeAgents.length === 0) {
+    row.innerHTML = '<span style="font-size:12px;color:var(--text3)">No hay agentes con tickets activos en el periodo</span>';
+    return;
+  }
+  row.innerHTML = activeAgents.map(function(a, i) {
     return '<button class="agent-btn" data-idx="'+i+'" data-agent="">'+a.name.split(' ')[0]+'</button>';
   }).join('');
-  // Asignar eventos y nombres via JS para evitar problemas con caracteres especiales
   var btns = row.querySelectorAll('.agent-btn');
   btns.forEach(function(btn, i) {
-    btn.setAttribute('data-agent', agents[i].name);
-    btn.addEventListener('click', function() { renderCompanyCards(agents[i].name); });
+    btn.setAttribute('data-agent', activeAgents[i].name);
+    btn.addEventListener('click', function() { renderCompanyCards(activeAgents[i].name); });
   });
   if (btns.length) btns[0].classList.add('selected');
+  // Render primer agente activo
+  if (activeAgents.length > 0) renderCompanyCards(activeAgents[0].name);
 }
 
 function renderCompanyCards(agentName) {
-  // Actualizar botones
   var btns = document.querySelectorAll('.agent-btn');
   btns.forEach(function(b) {
     b.classList.toggle('selected', b.getAttribute('data-agent') === agentName);
@@ -615,26 +639,26 @@ function renderCompanyCards(agentName) {
   var grid = document.getElementById('company-cards-grid');
   if (!grid) return;
 
-  // Filtrar tickets activos (open o pending) del agente
+  // Solo tickets activos del agente
   var active = tickets.filter(function(t) {
     return t.agent === agentName && (t.status === 'Open' || t.status === 'Pending');
   });
 
   if (active.length === 0) {
-    grid.innerHTML = '<div class="no-tickets">🎉 '+agentName.split(' ')[0]+' no tiene tickets abiertos ni pendientes en el periodo seleccionado</div>';
+    grid.innerHTML = '<div class="no-tickets">🎉 '+agentName.split(' ')[0]+' no tiene tickets abiertos ni pendientes en el periodo</div>';
     return;
   }
 
-  // Agrupar por empresa
+  // Agrupar por empresa con lista de tickets
   var companyMap = {};
   active.forEach(function(t) {
     var c = t.company || 'Sin empresa';
-    if (!companyMap[c]) companyMap[c] = {open:0, pending:0};
+    if (!companyMap[c]) companyMap[c] = {open:0, pending:0, tickets:[]};
     if (t.status === 'Open') companyMap[c].open++;
     if (t.status === 'Pending') companyMap[c].pending++;
+    companyMap[c].tickets.push(t);
   });
 
-  // Ordenar por total descendente
   var companies = Object.keys(companyMap).sort(function(a,b) {
     return (companyMap[b].open+companyMap[b].pending) - (companyMap[a].open+companyMap[a].pending);
   });
@@ -646,7 +670,22 @@ function renderCompanyCards(agentName) {
     var p = companyMap[c].pending;
     var total = o + p;
     var pct = Math.round(total / maxTotal * 100);
-    return '<div class="company-card">'+
+    var ticketItems = companyMap[c].tickets.map(function(t) {
+      var dotColor = t.status === 'Open' ? '#4f8ef7' : '#fbbf24';
+      var contact = t.contact || 'Sin contacto';
+      var subject = t.subject || 'Sin asunto';
+      var id = t.ticketId || '—';
+      return '<div class="ticket-item">'+
+        '<div class="ticket-item-top">'+
+          '<span class="ticket-id">#'+id+'</span>'+
+          '<span class="ticket-status-dot" style="background:'+dotColor+'"></span>'+
+          '<span class="ticket-subject" title="'+subject+'">'+subject+'</span>'+
+        '</div>'+
+        '<div class="ticket-contact">👤 '+contact+'</div>'+
+      '</div>';
+    }).join('');
+
+    return '<div class="company-card" data-company="'+encodeURIComponent(c)+'">'+
       '<div class="company-card-name" title="'+c+'">'+c+'</div>'+
       '<div class="company-card-stats">'+
         '<div class="stat-row">'+
@@ -662,6 +701,8 @@ function renderCompanyCards(agentName) {
         '<span class="company-card-total-label">Total activo</span>'+
         '<span class="company-card-total-value">'+total+'</span>'+
       '</div>'+
+      '<div class="expand-hint">▼ clic para ver tickets</div>'+
+      '<div class="ticket-list">'+ticketItems+'</div>'+
       '<div class="company-card-bar"><div class="company-card-bar-fill" style="width:'+pct+'%"></div></div>'+
     '</div>';
   }).join('');
