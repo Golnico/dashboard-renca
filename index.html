@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard de Soporte - Renca</title>
+<title>Proceso y Tecnologia</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
@@ -11,6 +11,8 @@
 :root{--bg:#0f1117;--bg2:#161b27;--bg3:#1e2535;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--text:#e8eaf0;--text2:#8b92a8;--text3:#555e78;--accent:#4f8ef7;--accent2:#7c5cfc;--green:#34d399;--amber:#fbbf24;--red:#f87171;--teal:#22d3ee;--radius:12px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6}
+
+/* HEADER */
 .header{padding:16px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(15,17,23,0.95);backdrop-filter:blur(12px);z-index:100}
 .header-left{display:flex;align-items:center;gap:12px}
 .logo{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;color:#fff}
@@ -19,7 +21,33 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .last-update{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
 .refresh-btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all .15s}
 .refresh-btn:hover{background:var(--bg2);color:var(--text);border-color:var(--accent)}
-.main{padding:20px 28px;max-width:1400px;margin:0 auto}
+
+/* NAV */
+.nav{display:flex;gap:2px;padding:0 28px;border-bottom:1px solid var(--border);background:var(--bg)}
+.nav-btn{padding:12px 18px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .15s;font-family:'DM Sans',sans-serif;letter-spacing:-0.1px}
+.nav-btn:hover{color:var(--text)}
+.nav-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* PAGES */
+.page{display:none;padding:24px 28px;max-width:1400px;margin:0 auto}
+.page.active{display:block}
+
+/* HOME */
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:8px}
+.home-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px 32px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.home-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 32px rgba(79,142,247,0.1)}
+.home-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--card-color,var(--accent));opacity:.8}
+.home-card-icon{font-size:28px;margin-bottom:16px}
+.home-card-title{font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px;letter-spacing:-0.3px}
+.home-card-desc{font-size:12px;color:var(--text2);margin-bottom:20px}
+.home-card-stats{display:flex;gap:24px;margin-bottom:20px}
+.home-stat{display:flex;flex-direction:column;gap:3px}
+.home-stat-value{font-size:32px;font-weight:600;letter-spacing:-1.5px;line-height:1;color:var(--text)}
+.home-stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+.home-card-link{font-size:12px;color:var(--accent);display:flex;align-items:center;gap:4px}
+.home-loading{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace}
+
+/* FILTER BAR */
 .filter-bar{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;flex-wrap:wrap;gap:12px}
 .filter-bar label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
 .filter-bar input[type=date]{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;cursor:pointer}
@@ -28,17 +56,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .filter-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all .15s}
 .filter-btn:hover{border-color:var(--accent);color:var(--accent)}
 .filter-count{font-size:11px;color:var(--text3);margin-left:auto;font-family:'DM Mono',monospace}
-.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:50vh;gap:16px}
-.spinner{width:36px;height:36px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading p{color:var(--text2);font-size:13px}
-.error-box{background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:var(--radius);padding:20px 24px;color:#fca5a5;font-size:13px}
+
+/* KPI */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin-bottom:20px}
 .kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden}
 .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--kpi-color,var(--accent));opacity:.7}
 .kpi-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
 .kpi-value{font-size:26px;font-weight:600;color:var(--text);letter-spacing:-1px;line-height:1}
 .kpi-sub{font-size:11px;color:var(--text2);margin-top:6px}
+
+/* CHARTS */
 .section-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;margin-top:24px}
 .charts-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
 .chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:14px}
@@ -47,6 +74,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
 .leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
 .leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* TABLE */
 .table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px}
 table{width:100%;border-collapse:collapse;font-size:13px}
 thead th{padding:10px 14px;text-align:left;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;background:var(--bg3);border-bottom:1px solid var(--border)}
@@ -59,13 +88,14 @@ tbody tr:hover td{background:var(--bg3)}
 .b-resolved{background:rgba(52,211,153,0.15);color:#6ee7b7}
 .b-closed{background:rgba(52,211,153,0.10);color:#86efac}
 .bar-mini{height:4px;border-radius:2px;margin-top:6px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
-@media(max-width:900px){.charts-3{grid-template-columns:1fr}.main{padding:16px}.header{padding:14px}}
+
+/* AGENT PANEL */
 .agent-filter-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
 .agent-btn{padding:7px 16px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all .2s}
 .agent-btn:hover{border-color:var(--accent);color:var(--accent)}
 .agent-btn.selected{background:rgba(79,142,247,0.15);border-color:var(--accent);color:var(--accent);font-weight:500}
 .company-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:24px}
-.company-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;transition:border-color .2s;position:relative;overflow:hidden}
+.company-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;transition:border-color .2s;position:relative;overflow:hidden;cursor:pointer}
 .company-card:hover{border-color:var(--border2)}
 .company-card-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .company-card-stats{display:flex;flex-direction:column;gap:8px}
@@ -78,11 +108,7 @@ tbody tr:hover td{background:var(--bg3)}
 .company-card-total-value{font-size:13px;font-weight:600;color:var(--text)}
 .company-card-bar{height:3px;position:absolute;bottom:0;left:0;right:0;background:var(--border)}
 .company-card-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s}
-.no-tickets{text-align:center;padding:40px;color:var(--text3);font-size:13px;grid-column:1/-1}
-.company-card{cursor:pointer}
-.company-card.expanded{border-color:var(--accent)}
 .ticket-list{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:none;flex-direction:column;gap:6px;max-height:260px;overflow-y:auto}
-.company-card.expanded .ticket-list{display:flex}
 .ticket-item{background:var(--bg3);border-radius:6px;padding:8px 10px;font-size:11px}
 .ticket-item-top{display:flex;align-items:center;gap:8px;margin-bottom:3px}
 .ticket-id{font-family:'DM Mono',monospace;color:var(--accent);font-weight:500;flex-shrink:0}
@@ -90,26 +116,87 @@ tbody tr:hover td{background:var(--bg3)}
 .ticket-subject{color:var(--text);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ticket-contact{color:var(--text3);font-size:11px;margin-top:2px}
 .expand-hint{font-size:10px;color:var(--text3);margin-top:8px;text-align:center}
+.no-tickets{text-align:center;padding:40px;color:var(--text3);font-size:13px;grid-column:1/-1}
+
+/* IMPRESORAS */
+.printer-kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:24px}
+.printer-table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px}
+.pages-bar{height:6px;border-radius:3px;background:var(--bg3);margin-top:6px}
+.pages-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .5s}
+
+/* LOADING / ERROR */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:50vh;gap:16px}
+.spinner{width:36px;height:36px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading p{color:var(--text2);font-size:13px}
+.error-box{background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:var(--radius);padding:20px 24px;color:#fca5a5;font-size:13px;margin-bottom:16px}
+
+@media(max-width:900px){.charts-3,.home-grid{grid-template-columns:1fr}.page{padding:16px}.header,.nav{padding-left:16px;padding-right:16px}}
 </style>
 </head>
 <body>
 
 <header class="header">
   <div class="header-left">
-    <div class="logo">S</div>
+    <div class="logo">P</div>
     <div>
-      <h1>Dashboard de Soporte</h1>
-      <div class="header-sub">Metricas de tickets · Freshdesk</div>
+      <h1>Proceso y Tecnologia</h1>
+      <div class="header-sub">Portal interno · Municipalidad de Renca</div>
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:12px">
     <span class="last-update" id="last-update"></span>
-    <button class="refresh-btn" onclick="reloadData()">Actualizar</button>
+    <button class="refresh-btn" onclick="initAll()">Actualizar</button>
   </div>
 </header>
 
-<main class="main">
-  <!-- Filter bar siempre visible -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="showPage('home')">Inicio</button>
+  <button class="nav-btn" onclick="showPage('mda')">Mesa de Ayuda</button>
+  <button class="nav-btn" onclick="showPage('impresoras')">Impresoras SF</button>
+</nav>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <p class="section-title" style="margin-top:8px">Resumen general</p>
+  <div class="home-grid">
+    <div class="home-card" style="--card-color:var(--accent)" onclick="showPage('mda')">
+      <div class="home-card-icon">🎧</div>
+      <div class="home-card-title">Mesa de Ayuda</div>
+      <div class="home-card-desc">Tickets de soporte · Freshdesk</div>
+      <div class="home-card-stats">
+        <div class="home-stat">
+          <span class="home-stat-value" id="home-tickets-active" style="color:var(--accent)">—</span>
+          <span class="home-stat-label">Tickets activos</span>
+        </div>
+        <div class="home-stat">
+          <span class="home-stat-value" id="home-tickets-total" style="color:var(--text2);font-size:22px">—</span>
+          <span class="home-stat-label">Total histórico</span>
+        </div>
+      </div>
+      <div class="home-card-link">Ver detalle →</div>
+    </div>
+    <div class="home-card" style="--card-color:var(--accent2)" onclick="showPage('impresoras')">
+      <div class="home-card-icon">🖨️</div>
+      <div class="home-card-title">Impresoras SF</div>
+      <div class="home-card-desc">Contadores de impresion</div>
+      <div class="home-card-stats">
+        <div class="home-stat">
+          <span class="home-stat-value" id="home-printers-count" style="color:var(--accent2)">—</span>
+          <span class="home-stat-label">Impresoras</span>
+        </div>
+        <div class="home-stat">
+          <span class="home-stat-value" id="home-printers-pages" style="color:var(--text2);font-size:22px">—</span>
+          <span class="home-stat-label">Total páginas</span>
+        </div>
+      </div>
+      <div class="home-card-link">Ver detalle →</div>
+    </div>
+  </div>
+</div>
+
+<!-- MESA DE AYUDA -->
+<div class="page" id="page-mda">
   <div class="filter-bar">
     <label>Desde</label>
     <input type="date" id="date-from" onchange="applyFilters()">
@@ -123,268 +210,234 @@ tbody tr:hover td{background:var(--bg3)}
     <button class="filter-btn" onclick="setAll()">Todo</button>
     <span class="filter-count" id="filter-count"></span>
   </div>
-
-  <!-- Contenido dinamico -->
   <div id="dash-content">
-    <div class="loading">
-      <div class="spinner"></div>
-      <p>Cargando datos desde Google Sheets...</p>
-    </div>
+    <div class="loading"><div class="spinner"></div><p>Cargando datos...</p></div>
   </div>
-</main>
+</div>
+
+<!-- IMPRESORAS -->
+<div class="page" id="page-impresoras">
+  <div id="printer-content">
+    <div class="loading"><div class="spinner"></div><p>Cargando impresoras...</p></div>
+  </div>
+</div>
 
 <script>
-var SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ1f3IBca3MrvNThStVb46n7VF28EKIWbty36-LX9b7l8FmiCjC5TM_rKL-DS1XWkjdJrISXcGDLDZE/pub?gid=0&single=true&output=csv';
+var SHEET_MDA = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ1f3IBca3MrvNThStVb46n7VF28EKIWbty36-LX9b7l8FmiCjC5TM_rKL-DS1XWkjdJrISXcGDLDZE/pub?gid=0&single=true&output=csv';
+var SHEET_PRINTERS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ1f3IBca3MrvNThStVb46n7VF28EKIWbty36-LX9b7l8FmiCjC5TM_rKL-DS1XWkjdJrISXcGDLDZE/pub?gid=1368369951&single=true&output=csv';
 var allTickets = [];
 var charts = {};
 
-function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+// ── NAV ──────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('page-'+id).classList.add('active');
+  var idx = {home:0,mda:1,impresoras:2}[id];
+  document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+}
 
-function normStatus(s) {
-  s = (s||'').trim().toLowerCase();
-  if (s==='open'||s==='2'||s==='abierto') return 'Open';
-  if (s==='pending'||s==='3'||s==='pendiente') return 'Pending';
-  if (s==='resolved'||s==='4'||s==='resuelto') return 'Resolved';
-  if (s==='closed'||s==='5'||s==='cerrado') return 'Closed';
-  return s || 'Unknown';
+// ── HELPERS ───────────────────────────────────────────
+function destroyChart(id){ if(charts[id]){ charts[id].destroy(); delete charts[id]; } }
+function normStatus(s){
+  s=(s||'').trim().toLowerCase();
+  if(s==='open'||s==='2'||s==='abierto')return'Open';
+  if(s==='pending'||s==='3'||s==='pendiente')return'Pending';
+  if(s==='resolved'||s==='4'||s==='resuelto')return'Resolved';
+  if(s==='closed'||s==='5'||s==='cerrado')return'Closed';
+  return s||'Unknown';
 }
-function normPriority(p) {
-  p = (p||'').trim().toLowerCase();
-  if (p==='low'||p==='1'||p==='baja') return 'Low';
-  if (p==='medium'||p==='2'||p==='media') return 'Medium';
-  if (p==='high'||p==='3'||p==='alta') return 'High';
-  if (p==='urgent'||p==='4'||p==='urgente') return 'Urgent';
-  return p || 'Unknown';
+function normPriority(p){
+  p=(p||'').trim().toLowerCase();
+  if(p==='low'||p==='1'||p==='baja')return'Low';
+  if(p==='medium'||p==='2'||p==='media')return'Medium';
+  if(p==='high'||p==='3'||p==='alta')return'High';
+  if(p==='urgent'||p==='4'||p==='urgente')return'Urgent';
+  return p||'Unknown';
 }
-function getField(row, names) {
-  for (var i=0; i<names.length; i++) {
-    if (row[names[i]] !== undefined && row[names[i]] !== '') return row[names[i]];
-  }
+function getField(row,names){
+  for(var i=0;i<names.length;i++) if(row[names[i]]!==undefined&&row[names[i]]!=='') return row[names[i]];
   return '';
 }
-function parseDate(str) {
-  if (!str) return null;
-  // DD/MM/YYYY HH:MM:SS o DD/MM/YYYY
-  var m = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
-  if (m) return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]));
-  // YYYY-MM-DD
-  var d = new Date(str);
-  if (!isNaN(d)) return d;
-  return null;
+function parseDate(str){
+  if(!str)return null;
+  var m=str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+  if(m)return new Date(parseInt(m[3]),parseInt(m[2])-1,parseInt(m[1]));
+  var d=new Date(str); return isNaN(d)?null:d;
 }
-function badge(text, cls) { return '<span class="badge '+cls+'">'+text+'</span>'; }
+function badge(text,cls){ return'<span class="badge '+cls+'">'+text+'</span>'; }
+function kpi(label,value,sub,color,style){
+  return'<div class="kpi-card" style="--kpi-color:'+color+'"><div class="kpi-label">'+label+'</div><div class="kpi-value" style="'+style+'">'+value+'</div><div class="kpi-sub">'+sub+'</div></div>';
+}
+function leg(color,text){
+  return'<span class="leg"><span class="leg-dot" style="background:'+color+'"></span>'+text+'</span>';
+}
+function fmtNum(n){ return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
 
-function reloadData() {
-  document.getElementById('dash-content').innerHTML = '<div class="loading"><div class="spinner"></div><p>Cargando datos...</p></div>';
-  fetch(SHEET_URL)
-    .then(function(r) { if (!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
-    .then(function(csv) {
-      var results = Papa.parse(csv, { header:true, skipEmptyLines:true });
-      if (!results.data || results.data.length === 0) {
-        document.getElementById('dash-content').innerHTML = '<div class="error-box">No se encontraron datos en la planilla.</div>';
-        return;
-      }
-      allTickets = results.data.map(function(r) {
-        return {
-          status:    normStatus(getField(r, ['Estado','Status'])),
-          priority:  normPriority(getField(r, ['Prioridad','Priority'])),
-          agent:     (getField(r, ['Agente','Agent','Assigned To']) || 'Sin asignar').trim(),
-          created:   parseDate(getField(r, ['Tiempo de creacion','Tiempo de creación','Created At','created_at'])),
-          company:   (getField(r, ['Nombre de la empresa','Company Name','company','empresa']) || 'Sin empresa').trim(),
-          ticketId:  getField(r, ['ID del ticket','Ticket ID','id','ID']),
-          subject:   getField(r, ['Asunto','Subject','subject','asunto']),
-          contact:   getField(r, ['Nombre completo','Full Name','Contact Name','nombre completo']),
-          resolveH:  parseFloat(getField(r, ['Tiempo de resolucion (en horas)','Tiempo de resolución (en horas)','Resolution Time (in hrs)'])) || null,
-          firstRespH:parseFloat(getField(r, ['Primer tiempo de respuesta (en horas)','First Response Time (in hrs)'])) || null,
-          slaStatus: (getField(r,['Estado de resolucion','Estado de resolución','Resolution Status','resolution_status'])||'').trim(),
-          overdue:   (function(){
-            var v = (getField(r,['Estado de resolucion','Estado de resolución','Resolution Status','resolution_status'])||'').toLowerCase().trim();
-            if (v.indexOf('violated') >= 0 || v.indexOf('sla violated') >= 0) return true;
-            var v2 = (getField(r,['Vencidas hasta ahora','Is Overdue'])||'').toLowerCase().trim();
-            return ['yes','si','sí','true'].indexOf(v2) >= 0;
-          })()
+// ── INIT ──────────────────────────────────────────────
+function initAll(){
+  loadMDA();
+  loadPrinters();
+  document.getElementById('last-update').textContent='Actualizado '+new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+}
+
+// ── MDA ───────────────────────────────────────────────
+function loadMDA(){
+  document.getElementById('dash-content').innerHTML='<div class="loading"><div class="spinner"></div><p>Cargando datos...</p></div>';
+  fetch(SHEET_MDA)
+    .then(function(r){ if(!r.ok)throw new Error('HTTP '+r.status); return r.text(); })
+    .then(function(csv){
+      var results=Papa.parse(csv,{header:true,skipEmptyLines:true});
+      if(!results.data||!results.data.length){ document.getElementById('dash-content').innerHTML='<div class="error-box">No se encontraron datos.</div>'; return; }
+      allTickets=results.data.map(function(r){
+        return{
+          status:    normStatus(getField(r,['Estado','Status'])),
+          priority:  normPriority(getField(r,['Prioridad','Priority'])),
+          agent:     (getField(r,['Agente','Agent','Assigned To'])||'Sin asignar').trim(),
+          created:   parseDate(getField(r,['Tiempo de creacion','Tiempo de creación','Created At'])),
+          resolveH:  parseFloat(getField(r,['Tiempo de resolucion (en horas)','Tiempo de resolución (en horas)','Resolution Time (in hrs)']))||null,
+          firstRespH:parseFloat(getField(r,['Primer tiempo de respuesta (en horas)','First Response Time (in hrs)']))||null,
+          overdue:   (function(){ var s=(getField(r,['Estado de resolucion','Estado de resolución','Resolution Status'])||'').toLowerCase(); return s.indexOf('violated')>=0; })(),
+          slaStatus: getField(r,['Estado de resolucion','Estado de resolución','Resolution Status']),
+          company:   (getField(r,['Nombre de la empresa','Company Name'])||'Sin empresa').trim(),
+          ticketId:  getField(r,['ID del ticket','Ticket ID']),
+          subject:   getField(r,['Asunto','Subject']),
+          contact:   getField(r,['Nombre completo','Full Name'])
         };
       });
-      // Set date range to full range
+      // Home summary
+      var active=allTickets.filter(function(t){ return t.status==='Open'||t.status==='Pending'; }).length;
+      document.getElementById('home-tickets-active').textContent=active;
+      document.getElementById('home-tickets-total').textContent=fmtNum(allTickets.length);
       setAll();
-      document.getElementById('last-update').textContent = 'Actualizado ' + new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
     })
-    .catch(function(err) {
-      document.getElementById('dash-content').innerHTML = '<div class="error-box">Error al conectar con Google Sheets: '+err.message+'</div>';
-    });
+    .catch(function(err){ document.getElementById('dash-content').innerHTML='<div class="error-box">Error: '+err.message+'</div>'; });
 }
 
-function setAll() {
-  var valid = allTickets.filter(function(t){ return t.created && !isNaN(t.created); }).map(function(t){ return t.created.getTime(); });
-  if (valid.length) {
-    document.getElementById('date-from').value = new Date(Math.min.apply(null,valid)).toISOString().slice(0,10);
-    document.getElementById('date-to').value   = new Date(Math.max.apply(null,valid)).toISOString().slice(0,10);
+function setAll(){
+  var valid=allTickets.filter(function(t){ return t.created&&!isNaN(t.created); }).map(function(t){ return t.created.getTime(); });
+  if(valid.length){
+    document.getElementById('date-from').value=new Date(Math.min.apply(null,valid)).toISOString().slice(0,10);
+    document.getElementById('date-to').value=new Date(Math.max.apply(null,valid)).toISOString().slice(0,10);
   }
   applyFilters();
 }
-
-function setRange(days) {
-  var to = new Date();
-  var from = new Date();
-  from.setDate(from.getDate() - days);
-  document.getElementById('date-from').value = from.toISOString().slice(0,10);
-  document.getElementById('date-to').value   = to.toISOString().slice(0,10);
+function setRange(days){
+  var to=new Date(), from=new Date();
+  from.setDate(from.getDate()-days);
+  document.getElementById('date-from').value=from.toISOString().slice(0,10);
+  document.getElementById('date-to').value=to.toISOString().slice(0,10);
   applyFilters();
 }
-
-function applyFilters() {
-  var fromVal = document.getElementById('date-from').value;
-  var toVal   = document.getElementById('date-to').value;
-  var from = fromVal ? new Date(fromVal) : null;
-  var to   = toVal   ? new Date(toVal+'T23:59:59') : null;
-  var filtered = allTickets.filter(function(t) {
-    if (!t.created || isNaN(t.created)) return true;
-    if (from && t.created < from) return false;
-    if (to   && t.created > to)   return false;
+function applyFilters(){
+  var fromVal=document.getElementById('date-from').value;
+  var toVal=document.getElementById('date-to').value;
+  var from=fromVal?new Date(fromVal):null;
+  var to=toVal?new Date(toVal+'T23:59:59'):null;
+  var filtered=allTickets.filter(function(t){
+    if(!t.created||isNaN(t.created))return true;
+    if(from&&t.created<from)return false;
+    if(to&&t.created>to)return false;
     return true;
   });
-  document.getElementById('filter-count').textContent = filtered.length + ' de ' + allTickets.length + ' tickets';
-  renderDashboard(filtered);
+  document.getElementById('filter-count').textContent=filtered.length+' de '+allTickets.length+' tickets';
+  renderMDA(filtered);
 }
 
-function renderDashboard(tickets) {
-  var total    = tickets.length;
-  var open     = tickets.filter(function(t){ return t.status==='Open'; }).length;
-  var pending  = tickets.filter(function(t){ return t.status==='Pending'; }).length;
-  var resolved = tickets.filter(function(t){ return t.status==='Resolved'; }).length;
-  var closed   = tickets.filter(function(t){ return t.status==='Closed'; }).length;
-  var overdue  = tickets.filter(function(t){ return t.overdue; }).length;
-  var withRes  = tickets.filter(function(t){ return t.resolveH && t.resolveH>0; });
-  var avgRes   = withRes.length ? withRes.reduce(function(s,t){ return s+t.resolveH; },0)/withRes.length : 0;
-  var withResp = tickets.filter(function(t){ return t.firstRespH && t.firstRespH>0; });
-  var avgResp  = withResp.length ? withResp.reduce(function(s,t){ return s+t.firstRespH; },0)/withResp.length : 0;
+function renderMDA(tickets){
+  var total=tickets.length;
+  var open=tickets.filter(function(t){ return t.status==='Open'; }).length;
+  var pending=tickets.filter(function(t){ return t.status==='Pending'; }).length;
+  var resolved=tickets.filter(function(t){ return t.status==='Resolved'; }).length;
+  var closed=tickets.filter(function(t){ return t.status==='Closed'; }).length;
+  var overdue=tickets.filter(function(t){ return t.overdue; }).length;
+  var withRes=tickets.filter(function(t){ return t.resolveH&&t.resolveH>0; });
+  var avgRes=withRes.length?withRes.reduce(function(s,t){ return s+t.resolveH; },0)/withRes.length:0;
+  var withResp=tickets.filter(function(t){ return t.firstRespH&&t.firstRespH>0; });
+  var avgResp=withResp.length?withResp.reduce(function(s,t){ return s+t.firstRespH; },0)/withResp.length:0;
 
-  // Agent stats
-  var agentMap = {};
-  tickets.forEach(function(t) {
-    if (!agentMap[t.agent]) agentMap[t.agent] = {name:t.agent,total:0,open:0,resolved:0,resH:[],respH:[]};
+  var agentMap={};
+  tickets.forEach(function(t){
+    if(!agentMap[t.agent])agentMap[t.agent]={name:t.agent,total:0,open:0,resolved:0,resH:[],respH:[]};
     agentMap[t.agent].total++;
-    if (t.status==='Open') agentMap[t.agent].open++;
-    if (t.status==='Resolved'||t.status==='Closed') agentMap[t.agent].resolved++;
-    if (t.resolveH  && t.resolveH>0)  agentMap[t.agent].resH.push(t.resolveH);
-    if (t.firstRespH && t.firstRespH>0) agentMap[t.agent].respH.push(t.firstRespH);
+    if(t.status==='Open')agentMap[t.agent].open++;
+    if(t.status==='Resolved'||t.status==='Closed')agentMap[t.agent].resolved++;
+    if(t.resolveH&&t.resolveH>0)agentMap[t.agent].resH.push(t.resolveH);
+    if(t.firstRespH&&t.firstRespH>0)agentMap[t.agent].respH.push(t.firstRespH);
   });
-  var agents = Object.values(agentMap).filter(function(a){
-    var n = a.name.toLowerCase();
-    return n !== 'sin asignar' && n !== 'no agent' && n !== '' && n !== '-';
-  }).sort(function(a,b){ return b.total-a.total; }).slice(0,10);
-  agents.forEach(function(a) {
-    a.avgRes  = a.resH.length  ? Math.round(a.resH.reduce(function(s,v){  return s+v; },0)/a.resH.length)  : null;
-    a.avgResp = a.respH.length ? Math.round(a.respH.reduce(function(s,v){ return s+v; },0)/a.respH.length) : null;
+  var agents=Object.values(agentMap).filter(function(a){ var n=a.name.toLowerCase(); return n!=='sin asignar'&&n!=='no agent'&&n!==''; }).sort(function(a,b){ return b.total-a.total; }).slice(0,10);
+  agents.forEach(function(a){
+    a.avgRes=a.resH.length?Math.round(a.resH.reduce(function(s,v){ return s+v; },0)/a.resH.length):null;
+    a.avgResp=a.respH.length?Math.round(a.respH.reduce(function(s,v){ return s+v; },0)/a.respH.length):null;
   });
 
-  // Monthly breakdown
-  var monthMap = {};
-  tickets.forEach(function(t) {
-    if (!t.created || isNaN(t.created)) return;
-    var key = t.created.getFullYear()+'-'+String(t.created.getMonth()+1).padStart(2,'0');
-    if (!monthMap[key]) monthMap[key] = {open:0,pending:0,resolved:0,closed:0,total:0};
-    var s = t.status.toLowerCase();
-    if (monthMap[key][s] !== undefined) monthMap[key][s]++;
+  var monthMap={}, slaMonthMap={};
+  tickets.forEach(function(t){
+    if(!t.created||isNaN(t.created))return;
+    var key=t.created.getFullYear()+'-'+String(t.created.getMonth()+1).padStart(2,'0');
+    if(!monthMap[key])monthMap[key]={open:0,pending:0,resolved:0,closed:0,total:0};
+    var s=t.status.toLowerCase();
+    if(monthMap[key][s]!==undefined)monthMap[key][s]++;
     monthMap[key].total++;
+    if(!slaMonthMap[key])slaMonthMap[key]={within:0,violated:0};
+    var sl=(t.slaStatus||'').toLowerCase();
+    if(sl.indexOf('violated')>=0)slaMonthMap[key].violated++;
+    else if(sl.length)slaMonthMap[key].within++;
   });
-  // Top 10 empresas por volumen mensual
-  var companyTotals = {};
-  tickets.forEach(function(t) {
-    if (!companyTotals[t.company]) companyTotals[t.company] = 0;
-    companyTotals[t.company]++;
-  });
-  var top10 = Object.keys(companyTotals).sort(function(a,b){ return companyTotals[b]-companyTotals[a]; }).slice(0,10);
 
-  var companyMonthMap = {};
-  top10.forEach(function(c) { companyMonthMap[c] = {}; });
-  tickets.forEach(function(t) {
-    if (!t.created || isNaN(t.created)) return;
-    if (top10.indexOf(t.company) < 0) return;
-    var key = t.created.getFullYear()+'-'+String(t.created.getMonth()+1).padStart(2,'0');
-    if (!companyMonthMap[t.company][key]) companyMonthMap[t.company][key] = {created:0, resolved:0};
+  var companyTotals={};
+  tickets.forEach(function(t){ if(!companyTotals[t.company])companyTotals[t.company]=0; companyTotals[t.company]++; });
+  var top10=Object.keys(companyTotals).sort(function(a,b){ return companyTotals[b]-companyTotals[a]; }).slice(0,10);
+  var companyMonthMap={};
+  top10.forEach(function(c){ companyMonthMap[c]={}; });
+  tickets.forEach(function(t){
+    if(!t.created||isNaN(t.created))return;
+    if(top10.indexOf(t.company)<0)return;
+    var key=t.created.getFullYear()+'-'+String(t.created.getMonth()+1).padStart(2,'0');
+    if(!companyMonthMap[t.company][key])companyMonthMap[t.company][key]={created:0,resolved:0};
     companyMonthMap[t.company][key].created++;
-    if (t.status==='Resolved'||t.status==='Closed') companyMonthMap[t.company][key].resolved++;
+    if(t.status==='Resolved'||t.status==='Closed')companyMonthMap[t.company][key].resolved++;
   });
 
-  // SLA mensual
-  var slaMonthMap = {};
-  tickets.forEach(function(t) {
-    if (!t.created || isNaN(t.created)) return;
-    var key = t.created.getFullYear()+'-'+String(t.created.getMonth()+1).padStart(2,'0');
-    if (!slaMonthMap[key]) slaMonthMap[key] = {within:0, violated:0};
-    var s = (t.slaStatus||'').toLowerCase();
-    if (s.indexOf('violated') >= 0) slaMonthMap[key].violated++;
-    else if (s.indexOf('within') >= 0 || s.indexOf('sla') >= 0) slaMonthMap[key].within++;
-  });
+  var monthKeys=Object.keys(monthMap).sort();
+  var monthLabels=monthKeys.map(function(k){ var p=k.split('-'); return new Date(p[0],p[1]-1,1).toLocaleDateString('es-CL',{month:'short',year:'2-digit'}); });
+  var statuses=['Open','Pending','Resolved','Closed'];
+  var priorities=['Urgent','High','Medium','Low'];
+  var statusColors=['#4f8ef7','#fbbf24','#34d399','#22d3ee'];
+  var prioColors=['#f87171','#fbbf24','#4f8ef7','#8b92a8'];
+  var agentColors=['#4f8ef7','#7c5cfc','#34d399','#fbbf24','#f87171','#22d3ee','#a78bfa','#fb923c','#4ade80','#e879f9'];
+  var statusCounts=statuses.map(function(s){ return tickets.filter(function(t){ return t.status===s; }).length; });
+  var prioCounts=priorities.map(function(p){ return tickets.filter(function(t){ return t.priority===p; }).length; });
+  var maxTotal=Math.max.apply(null,agents.map(function(a){ return a.total; }).concat([1]));
 
-  var monthKeys   = Object.keys(monthMap).sort();
-  var monthLabels = monthKeys.map(function(k) {
-    var p = k.split('-');
-    return new Date(p[0], p[1]-1, 1).toLocaleDateString('es-CL',{month:'short',year:'2-digit'});
-  });
-
-  var statuses     = ['Open','Pending','Resolved','Closed'];
-  var priorities   = ['Urgent','High','Medium','Low'];
-  var statusColors = ['#4f8ef7','#fbbf24','#34d399','#22d3ee'];
-  var prioColors   = ['#f87171','#fbbf24','#4f8ef7','#8b92a8'];
-  var agentColors  = ['#4f8ef7','#7c5cfc','#34d399','#fbbf24','#f87171','#22d3ee','#a78bfa','#fb923c','#4ade80','#e879f9'];
-  var statusCounts = statuses.map(function(s){ return tickets.filter(function(t){ return t.status===s; }).length; });
-  var prioCounts   = priorities.map(function(p){ return tickets.filter(function(t){ return t.priority===p; }).length; });
-  var maxTotal     = Math.max.apply(null, agents.map(function(a){ return a.total; }).concat([1]));
-
-  var agentRows = agents.map(function(a) {
-    return '<tr>'+
-      '<td style="font-weight:500">'+a.name+'</td>'+
-      '<td>'+a.total+'</td>'+
-      '<td>'+badge(a.open,'b-open')+'</td>'+
-      '<td style="color:var(--green)">'+a.resolved+'</td>'+
-      '<td style="font-family:DM Mono,monospace;color:var(--teal)">'+(a.avgRes!==null?a.avgRes+'h':'—')+'</td>'+
-      '<td style="font-family:DM Mono,monospace;color:var(--accent2)">'+(a.avgResp!==null?a.avgResp+'h':'—')+'</td>'+
-      '<td style="min-width:80px"><div style="font-size:11px;color:var(--text3)">'+Math.round(a.total/maxTotal*100)+'%</div><div class="bar-mini" style="width:'+Math.round(a.total/maxTotal*100)+'%"></div></td>'+
-    '</tr>';
+  var agentRows=agents.map(function(a){
+    return'<tr><td style="font-weight:500">'+a.name+'</td><td>'+a.total+'</td><td>'+badge(a.open,'b-open')+'</td><td style="color:var(--green)">'+a.resolved+'</td><td style="font-family:DM Mono,monospace;color:var(--teal)">'+(a.avgRes!==null?a.avgRes+'h':'—')+'</td><td style="font-family:DM Mono,monospace;color:var(--accent2)">'+(a.avgResp!==null?a.avgResp+'h':'—')+'</td><td style="min-width:80px"><div style="font-size:11px;color:var(--text3)">'+Math.round(a.total/maxTotal*100)+'%</div><div class="bar-mini" style="width:'+Math.round(a.total/maxTotal*100)+'%"></div></td></tr>';
   }).join('');
 
-  document.getElementById('dash-content').innerHTML =
+  document.getElementById('dash-content').innerHTML=
     '<div class="kpi-grid">'+
-      kpi('Total tickets', total, 'en el periodo', '#4f8ef7', '')+
-      kpi('Abiertos', open, (total?Math.round(open/total*100):0)+'% del total', '#4f8ef7', 'color:var(--accent)')+
-      kpi('Pendientes', pending, 'en espera', '#fbbf24', 'color:var(--amber)')+
-      kpi('Resueltos', resolved, (total?Math.round(resolved/total*100):0)+'% del total', '#34d399', 'color:var(--green)')+
-      kpi('Cerrados', closed, (total?Math.round(closed/total*100):0)+'% del total', '#22d3ee', 'color:var(--teal)')+
-      kpi('Vencidos', overdue, 'SLA incumplido', '#f87171', 'color:var(--red)')+
-      kpi('Tiempo res. prom.', avgRes>0?avgRes.toFixed(1)+'h':'N/A', 'promedio', '#22d3ee', 'color:var(--teal)')+
-      kpi('1a resp. prom.', avgResp>0?avgResp.toFixed(1)+'h':'N/A', 'primera respuesta', '#7c5cfc', 'color:var(--accent2)')+
+      kpi('Total tickets',total,'en el periodo','#4f8ef7','')+
+      kpi('Abiertos',open,(total?Math.round(open/total*100):0)+'% del total','#4f8ef7','color:var(--accent)')+
+      kpi('Pendientes',pending,'en espera','#fbbf24','color:var(--amber)')+
+      kpi('Resueltos',resolved,(total?Math.round(resolved/total*100):0)+'% del total','#34d399','color:var(--green)')+
+      kpi('Cerrados',closed,(total?Math.round(closed/total*100):0)+'% del total','#22d3ee','color:var(--teal)')+
+      kpi('Vencidos',overdue,'SLA incumplido','#f87171','color:var(--red)')+
+      kpi('Tiempo res. prom.',avgRes>0?avgRes.toFixed(1)+'h':'N/A','promedio','#22d3ee','color:var(--teal)')+
+      kpi('1a resp. prom.',avgResp>0?avgResp.toFixed(1)+'h':'N/A','primera respuesta','#7c5cfc','color:var(--accent2)')+
     '</div>'+
     '<p class="section-title">Tickets por mes — estado</p>'+
     '<div class="chart-card">'+
       '<div class="chart-title">Volumen mensual por estado</div>'+
-      '<div class="chart-sub">Barras apiladas: Open / Pending / Resolved / Closed · Linea punteada: total del mes</div>'+
-      '<div class="legend">'+
-        leg('#4f8ef7','Open')+leg('#fbbf24','Pending')+leg('#34d399','Resolved')+leg('#22d3ee','Closed')+
-        leg('#e2e8f0','Total (todos los estados)')+
-      '</div>'+
+      '<div class="chart-sub">Open / Pending / Resolved / Closed · Linea punteada: total</div>'+
+      '<div class="legend">'+leg('#4f8ef7','Open')+leg('#fbbf24','Pending')+leg('#34d399','Resolved')+leg('#22d3ee','Closed')+leg('#e2e8f0','Total')+'</div>'+
       '<div style="position:relative;height:280px"><canvas id="chart-monthly"></canvas></div>'+
-    '</div>'+
-    '<p class="section-title">Tickets creados vs resueltos por empresa</p>'+
-    '<div class="chart-card">'+
-      '<div class="chart-title">Creados vs Resueltos por mes</div>'+
-      '<div class="chart-sub">Selecciona una empresa para ver el detalle mensual</div>'+
-      '<div style="margin-bottom:12px">'+
-        '<select id="company-select" onchange="updateCompanyChart()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:6px 12px;font-size:13px;font-family:DM Sans,sans-serif;outline:none;cursor:pointer;min-width:220px"></select>'+
-      '</div>'+
-      '<div id="leg-company" class="legend"></div>'+
-      '<div style="position:relative;height:280px"><canvas id="chart-company"></canvas></div>'+
     '</div>'+
     '<p class="section-title">SLA por mes</p>'+
     '<div class="chart-card">'+
       '<div class="chart-title">Within SLA vs SLA Violated por mes</div>'+
-      '<div class="chart-sub">Barras apiladas: verde = cumplido · rojo = violado</div>'+
-      '<div class="legend">'+
-        '<span class="leg"><span class="leg-dot" style="background:#34d399"></span>Within SLA</span>'+
-        '<span class="leg"><span class="leg-dot" style="background:#f87171"></span>SLA Violated</span>'+
-      '</div>'+
-      '<div style="position:relative;height:280px"><canvas id="chart-sla"></canvas></div>'+
+      '<div class="chart-sub">Barras apiladas</div>'+
+      '<div class="legend">'+leg('#34d399','Within SLA')+leg('#f87171','SLA Violated')+'</div>'+
+      '<div style="position:relative;height:260px"><canvas id="chart-sla"></canvas></div>'+
     '</div>'+
     '<p class="section-title">Distribucion</p>'+
     '<div class="charts-3">'+
@@ -392,341 +445,176 @@ function renderDashboard(tickets) {
       '<div class="chart-card" style="margin-bottom:0"><div class="chart-title">Por prioridad</div><div class="chart-sub">Nivel de urgencia</div><div id="leg-prio" class="legend"></div><div style="position:relative;height:190px"><canvas id="chart-prio"></canvas></div></div>'+
       '<div class="chart-card" style="margin-bottom:0"><div class="chart-title">Por agente</div><div class="chart-sub">Top agentes</div><div style="position:relative;height:190px"><canvas id="chart-agent"></canvas></div></div>'+
     '</div>'+
+    '<p class="section-title">Tickets creados vs resueltos por empresa</p>'+
+    '<div class="chart-card">'+
+      '<div class="chart-title">Creados vs Resueltos por mes</div>'+
+      '<div class="chart-sub">Selecciona una empresa</div>'+
+      '<div style="margin-bottom:12px"><select id="company-select" onchange="updateCompanyChart()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:6px 12px;font-size:13px;font-family:DM Sans,sans-serif;outline:none;cursor:pointer;min-width:220px"></select></div>'+
+      '<div id="leg-company" class="legend"></div>'+
+      '<div style="position:relative;height:260px"><canvas id="chart-company"></canvas></div>'+
+    '</div>'+
     '<p class="section-title">Panel de trabajo por agente</p>'+
     '<div class="chart-card" style="margin-bottom:14px">'+
       '<div class="chart-title">Tickets activos por empresa</div>'+
-      '<div class="chart-sub">Selecciona un agente para ver sus tickets abiertos y pendientes por empresa</div>'+
+      '<div class="chart-sub">Selecciona un agente · Clic en empresa para ver tickets</div>'+
       '<div class="agent-filter-row" id="agent-btn-row"></div>'+
       '<div class="company-cards" id="company-cards-grid"></div>'+
     '</div>'+
     '<p class="section-title">Resumen por agente</p>'+
     '<div class="table-wrap"><table><thead><tr><th>Agente</th><th>Total</th><th>Abiertos</th><th>Resueltos</th><th>Tiempo res.</th><th>1a resp.</th><th>Carga</th></tr></thead><tbody>'+agentRows+'</tbody></table></div>';
 
-  // Chart monthly - lineas por estado
+  // Guardar datos globales
+  window._dashMonthKeys=monthKeys; window._dashMonthLabels=monthLabels;
+  window._dashCompanyMonthMap=companyMonthMap; window._dashTop10=top10;
+  window._dashCompanyTotals=companyTotals; window._dashAgents=agents;
+  window._dashTickets=tickets;
+
+  var baseOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}};
+  function mkLine(label,data,color,dash){
+    return{label:label,data:data,borderColor:color,backgroundColor:'transparent',borderWidth:2,borderDash:dash||[],pointRadius:3,pointBackgroundColor:color,pointBorderColor:'#0f1117',pointBorderWidth:2,tension:0.3,fill:false};
+  }
+
   destroyChart('monthly');
-  function mkLine(label, data, color, dash) {
-    return {
-      label: label, data: data,
-      borderColor: color, backgroundColor: 'transparent',
-      borderWidth: 2, borderDash: dash||[],
-      pointRadius: 3, pointBackgroundColor: color,
-      pointBorderColor: '#0f1117', pointBorderWidth: 2,
-      tension: 0.3, fill: false
-    };
-  }
-  charts['monthly'] = new Chart(document.getElementById('chart-monthly'), {
-    type: 'line',
-    data: {
-      labels: monthLabels,
-      datasets: [
-        mkLine('Open',     monthKeys.map(function(k){return monthMap[k].open||0;}),     '#4f8ef7'),
-        mkLine('Pending',  monthKeys.map(function(k){return monthMap[k].pending||0;}),  '#fbbf24'),
-        mkLine('Resolved', monthKeys.map(function(k){return monthMap[k].resolved||0;}), '#34d399'),
-        mkLine('Closed',   monthKeys.map(function(k){return monthMap[k].closed||0;}),   '#22d3ee'),
-        mkLine('Total',    monthKeys.map(function(k){return monthMap[k].total||0;}),    '#e2e8f0', [4,3])
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: {display:false},
-        tooltip: {
-          mode:'index', intersect:false,
-          callbacks: {
-            label: function(ctx) { return ' '+ctx.dataset.label+': '+ctx.parsed.y; }
-          }
-        }
-      },
-      scales: {
-        x: {ticks:{color:'#555e78',font:{size:11},autoSkip:false,maxRotation:45},grid:{display:false}},
-        y: {beginAtZero:true,ticks:{color:'#555e78',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}}
-      }
-    }
-  });
+  charts['monthly']=new Chart(document.getElementById('chart-monthly'),{type:'line',data:{labels:monthLabels,datasets:[
+    mkLine('Open',monthKeys.map(function(k){ return monthMap[k].open||0; }),'#4f8ef7'),
+    mkLine('Pending',monthKeys.map(function(k){ return monthMap[k].pending||0; }),'#fbbf24'),
+    mkLine('Resolved',monthKeys.map(function(k){ return monthMap[k].resolved||0; }),'#34d399'),
+    mkLine('Closed',monthKeys.map(function(k){ return monthMap[k].closed||0; }),'#22d3ee'),
+    mkLine('Total',monthKeys.map(function(k){ return monthMap[k].total||0; }),'#e2e8f0',[4,3])
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{color:'#555e78',font:{size:11},autoSkip:false,maxRotation:45},grid:{display:false}},y:{beginAtZero:true,ticks:{color:'#555e78',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}}}}});
 
-  // Guardar datos para uso en updateCompanyChart
-  // Guardar datos para panel de agente
-  window._dashAgents = agents;
-  window._dashTickets = tickets;
-  window._dashMonthKeys = monthKeys;
-  window._dashMonthLabels = monthLabels;
-  window._dashCompanyMonthMap = companyMonthMap;
-  window._dashTop10 = top10;
-  window._dashCompanyTotals = companyTotals;
-
-  // Poblar select
-  var sel = document.getElementById('company-select');
-  if (sel) {
-    sel.innerHTML = top10.map(function(c){ return '<option value="'+c+'">'+c+' ('+companyTotals[c]+' tickets)</option>'; }).join('');
-  }
-
-  var companyColors = ['#4f8ef7','#34d399','#fbbf24','#f87171','#7c5cfc','#22d3ee','#fb923c','#a78bfa','#4ade80','#e879f9'];
-  window._dashCompanyColors = companyColors;
-
-  // Render inicial empresa
-  updateCompanyChart();
-
-  // Inicializar panel de agente
-  renderAgentBtns();
-
-  // Dummy para reemplazar bloque viejo - chart SLA viene abajo
-  var _dummy = {
-    type: 'bar',
-    data: { labels: [], datasets: [] },
-    options: {}
-  };
-
-  // Chart SLA
   destroyChart('sla');
-  charts['sla'] = new Chart(document.getElementById('chart-sla'), {
-    type: 'bar',
-    data: {
-      labels: monthLabels,
-      datasets: [
-        {
-          label: 'Within SLA',
-          data: monthKeys.map(function(k){ return slaMonthMap[k]?slaMonthMap[k].within:0; }),
-          backgroundColor: 'rgba(52,211,153,0.8)', stack: 's', borderRadius: 2, borderSkipped: false
-        },
-        {
-          label: 'SLA Violated',
-          data: monthKeys.map(function(k){ return slaMonthMap[k]?slaMonthMap[k].violated:0; }),
-          backgroundColor: 'rgba(248,113,113,0.85)', stack: 's', borderRadius: 2, borderSkipped: false
-        }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend:{display:false}, tooltip:{mode:'index',intersect:false} },
-      scales: {
-        x: {stacked:true, ticks:{color:'#555e78',font:{size:11},autoSkip:false,maxRotation:45}, grid:{display:false}},
-        y: {stacked:true, beginAtZero:true, ticks:{color:'#555e78',font:{size:11}}, grid:{color:'rgba(255,255,255,0.04)'}}
-      }
-    }
-  });
-
-  var baseOpts = {responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}};
+  charts['sla']=new Chart(document.getElementById('chart-sla'),{type:'bar',data:{labels:monthLabels,datasets:[
+    {label:'Within SLA',data:monthKeys.map(function(k){ return slaMonthMap[k]?slaMonthMap[k].within:0; }),backgroundColor:'rgba(52,211,153,0.8)',stack:'s',borderRadius:2,borderSkipped:false},
+    {label:'SLA Violated',data:monthKeys.map(function(k){ return slaMonthMap[k]?slaMonthMap[k].violated:0; }),backgroundColor:'rgba(248,113,113,0.85)',stack:'s',borderRadius:2,borderSkipped:false}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{stacked:true,ticks:{color:'#555e78',font:{size:11},autoSkip:false,maxRotation:45},grid:{display:false}},y:{stacked:true,beginAtZero:true,ticks:{color:'#555e78',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}}}}});
 
   destroyChart('status');
-  charts['status'] = new Chart(document.getElementById('chart-status'), {
-    type:'doughnut',
-    data:{labels:statuses, datasets:[{data:statusCounts, backgroundColor:statusColors, borderWidth:0, hoverOffset:4}]},
-    options: Object.assign({}, baseOpts, {cutout:'65%'})
-  });
-  document.getElementById('leg-status').innerHTML = statuses.map(function(s,i){
-    return leg(statusColors[i], s+' ('+statusCounts[i]+')');
-  }).join('');
+  charts['status']=new Chart(document.getElementById('chart-status'),{type:'doughnut',data:{labels:statuses,datasets:[{data:statusCounts,backgroundColor:statusColors,borderWidth:0,hoverOffset:4}]},options:Object.assign({},baseOpts,{cutout:'65%'})});
+  document.getElementById('leg-status').innerHTML=statuses.map(function(s,i){ return leg(statusColors[i],s+' ('+statusCounts[i]+')'); }).join('');
 
   destroyChart('prio');
-  charts['prio'] = new Chart(document.getElementById('chart-prio'), {
-    type:'doughnut',
-    data:{labels:priorities, datasets:[{data:prioCounts, backgroundColor:prioColors, borderWidth:0, hoverOffset:4}]},
-    options: Object.assign({}, baseOpts, {cutout:'65%'})
-  });
-  document.getElementById('leg-prio').innerHTML = priorities.map(function(p,i){
-    return leg(prioColors[i], p+' ('+prioCounts[i]+')');
-  }).join('');
+  charts['prio']=new Chart(document.getElementById('chart-prio'),{type:'doughnut',data:{labels:priorities,datasets:[{data:prioCounts,backgroundColor:prioColors,borderWidth:0,hoverOffset:4}]},options:Object.assign({},baseOpts,{cutout:'65%'})});
+  document.getElementById('leg-prio').innerHTML=priorities.map(function(p,i){ return leg(prioColors[i],p+' ('+prioCounts[i]+')'); }).join('');
 
-  destroyChart('agent');
-  charts['agent'] = new Chart(document.getElementById('chart-agent'), {
-    type:'bar',
-    data:{
-      labels: agents.slice(0,8).map(function(a){ return a.name.split(' ')[0]; }),
-      datasets:[{data:agents.slice(0,8).map(function(a){ return a.total; }), backgroundColor:agentColors, borderRadius:4, borderSkipped:false}]
-    },
-    options: Object.assign({}, baseOpts, {scales:{
-      x:{ticks:{color:'#555e78',font:{size:10}},grid:{display:false}},
-      y:{ticks:{color:'#555e78',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}}
-    }})
-  });
+  destroyChart('agent-chart');
+  charts['agent-chart']=new Chart(document.getElementById('chart-agent'),{type:'bar',data:{labels:agents.slice(0,8).map(function(a){ return a.name.split(' ')[0]; }),datasets:[{data:agents.slice(0,8).map(function(a){ return a.total; }),backgroundColor:agentColors,borderRadius:4,borderSkipped:false}]},options:Object.assign({},baseOpts,{scales:{x:{ticks:{color:'#555e78',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#555e78',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}}}})});
+
+  // Selector empresa
+  var sel=document.getElementById('company-select');
+  if(sel) sel.innerHTML=top10.map(function(c){ return'<option value="'+c+'">'+c+' ('+companyTotals[c]+' tickets)</option>'; }).join('');
+  updateCompanyChart();
+
+  // Panel agente
+  renderAgentBtns();
 }
 
-function kpi(label, value, sub, color, style) {
-  return '<div class="kpi-card" style="--kpi-color:'+color+'">'+
-    '<div class="kpi-label">'+label+'</div>'+
-    '<div class="kpi-value" style="'+style+'">'+value+'</div>'+
-    '<div class="kpi-sub">'+sub+'</div>'+
-  '</div>';
-}
-function leg(color, text) {
-  return '<span class="leg"><span class="leg-dot" style="background:'+color+'"></span>'+text+'</span>';
-}
-
-function updateCompanyChart() {
-  var sel = document.getElementById('company-select');
-  if (!sel || !window._dashMonthKeys) return;
-  var c = sel.value;
-  var monthKeys = window._dashMonthKeys;
-  var monthLabels = window._dashMonthLabels;
-  var map = window._dashCompanyMonthMap;
-  var colors = window._dashCompanyColors;
-  var idx = window._dashTop10.indexOf(c);
-  var color = colors[idx >= 0 ? idx : 0];
-
-  var legEl = document.getElementById('leg-company');
-  if (legEl) {
-    var total = window._dashCompanyTotals[c] || 0;
-    var res = monthKeys.reduce(function(s,k){ return s + (map[c]&&map[c][k]?map[c][k].resolved:0); },0);
-    legEl.innerHTML =
-      '<span class="leg"><span class="leg-dot" style="background:'+color+'"></span>Creados ('+total+')</span>'+
-      '<span class="leg"><span class="leg-dot" style="background:rgba(52,211,153,0.8);"></span>Resueltos/Cerrados ('+res+')</span>';
-  }
-
+function updateCompanyChart(){
+  var sel=document.getElementById('company-select');
+  if(!sel||!window._dashMonthKeys)return;
+  var c=sel.value, monthKeys=window._dashMonthKeys, monthLabels=window._dashMonthLabels;
+  var map=window._dashCompanyMonthMap, colors=['#4f8ef7','#7c5cfc','#34d399','#fbbf24','#f87171','#22d3ee','#a78bfa','#fb923c','#4ade80','#e879f9'];
+  var idx=window._dashTop10.indexOf(c), color=colors[idx>=0?idx:0];
+  var total=window._dashCompanyTotals[c]||0;
+  var res=monthKeys.reduce(function(s,k){ return s+(map[c]&&map[c][k]?map[c][k].resolved:0); },0);
+  var legEl=document.getElementById('leg-company');
+  if(legEl) legEl.innerHTML=leg(color,'Creados ('+total+')')+leg('rgba(52,211,153,0.8)','Resueltos/Cerrados ('+res+')');
   destroyChart('company');
-  charts['company'] = new Chart(document.getElementById('chart-company'), {
-    type: 'bar',
-    data: {
-      labels: monthLabels,
-      datasets: [
-        {
-          label: 'Creados',
-          data: monthKeys.map(function(k){ return map[c]&&map[c][k]?map[c][k].created:0; }),
-          backgroundColor: 'rgba(79,142,247,0.75)', borderRadius: 4, borderSkipped: false
-        },
-        {
-          label: 'Resueltos/Cerrados',
-          data: monthKeys.map(function(k){ return map[c]&&map[c][k]?map[c][k].resolved:0; }),
-          backgroundColor: 'rgba(52,211,153,0.75)', borderRadius: 4, borderSkipped: false
-        }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend:{display:false}, tooltip:{mode:'index',intersect:false} },
-      scales: {
-        x: {ticks:{color:'#555e78',font:{size:11},autoSkip:false,maxRotation:45},grid:{display:false}},
-        y: {beginAtZero:true,ticks:{color:'#555e78',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}}
-      }
-    }
-  });
+  charts['company']=new Chart(document.getElementById('chart-company'),{type:'bar',data:{labels:monthLabels,datasets:[
+    {label:'Creados',data:monthKeys.map(function(k){ return map[c]&&map[c][k]?map[c][k].created:0; }),backgroundColor:'rgba(79,142,247,0.75)',borderRadius:4,borderSkipped:false},
+    {label:'Resueltos',data:monthKeys.map(function(k){ return map[c]&&map[c][k]?map[c][k].resolved:0; }),backgroundColor:'rgba(52,211,153,0.75)',borderRadius:4,borderSkipped:false}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{color:'#555e78',font:{size:11},autoSkip:false,maxRotation:45},grid:{display:false}},y:{beginAtZero:true,ticks:{color:'#555e78',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}}}}});
 }
 
-function renderAgentBtns() {
-  var agents = window._dashAgents || [];
-  var tickets = window._dashTickets || [];
-  // Solo agentes con tickets activos
-  var activeAgents = agents.filter(function(a) {
-    return tickets.some(function(t) {
-      return t.agent === a.name && (t.status === 'Open' || t.status === 'Pending');
-    });
-  });
-  var row = document.getElementById('agent-btn-row');
-  if (!row) return;
-  if (activeAgents.length === 0) {
-    row.innerHTML = '<span style="font-size:12px;color:var(--text3)">No hay agentes con tickets activos en el periodo</span>';
-    return;
-  }
-  row.innerHTML = activeAgents.map(function(a, i) {
-    return '<button class="agent-btn" data-idx="'+i+'" data-agent="">'+a.name.split(' ')[0]+'</button>';
-  }).join('');
-  var btns = row.querySelectorAll('.agent-btn');
-  btns.forEach(function(btn, i) {
-    btn.setAttribute('data-agent', activeAgents[i].name);
-    btn.addEventListener('click', function() { renderCompanyCards(activeAgents[i].name); });
-  });
-  if (btns.length) btns[0].classList.add('selected');
-  // Render primer agente activo
-  if (activeAgents.length > 0) renderCompanyCards(activeAgents[0].name);
+function renderAgentBtns(){
+  var agents=window._dashAgents||[], tickets=window._dashTickets||[];
+  var activeAgents=agents.filter(function(a){ return tickets.some(function(t){ return t.agent===a.name&&(t.status==='Open'||t.status==='Pending'); }); });
+  var row=document.getElementById('agent-btn-row'); if(!row)return;
+  if(!activeAgents.length){ row.innerHTML='<span style="font-size:12px;color:var(--text3)">No hay agentes con tickets activos</span>'; return; }
+  row.innerHTML=activeAgents.map(function(a,i){ return'<button class="agent-btn" data-idx="'+i+'">'+a.name.split(' ')[0]+'</button>'; }).join('');
+  var btns=row.querySelectorAll('.agent-btn');
+  btns.forEach(function(btn,i){ btn.setAttribute('data-agent',activeAgents[i].name); btn.addEventListener('click',function(){ renderCompanyCards(activeAgents[i].name); }); });
+  if(btns.length)btns[0].classList.add('selected');
+  if(activeAgents.length)renderCompanyCards(activeAgents[0].name);
 }
 
-function renderCompanyCards(agentName) {
-  var btns = document.querySelectorAll('.agent-btn');
-  btns.forEach(function(b) {
-    b.classList.toggle('selected', b.getAttribute('data-agent') === agentName);
-  });
-
-  var tickets = window._dashTickets || [];
-  var grid = document.getElementById('company-cards-grid');
-  if (!grid) return;
-
-  // Solo tickets activos del agente
-  var active = tickets.filter(function(t) {
-    return t.agent === agentName && (t.status === 'Open' || t.status === 'Pending');
-  });
-
-  if (active.length === 0) {
-    grid.innerHTML = '<div class="no-tickets">🎉 '+agentName.split(' ')[0]+' no tiene tickets abiertos ni pendientes en el periodo</div>';
-    return;
-  }
-
-  // Agrupar por empresa con lista de tickets
-  var companyMap = {};
-  active.forEach(function(t) {
-    var c = t.company || 'Sin empresa';
-    if (!companyMap[c]) companyMap[c] = {open:0, pending:0, tickets:[]};
-    if (t.status === 'Open') companyMap[c].open++;
-    if (t.status === 'Pending') companyMap[c].pending++;
-    companyMap[c].tickets.push(t);
-  });
-
-  var companies = Object.keys(companyMap).sort(function(a,b) {
-    return (companyMap[b].open+companyMap[b].pending) - (companyMap[a].open+companyMap[a].pending);
-  });
-
-  var maxTotal = Math.max.apply(null, companies.map(function(c){ return companyMap[c].open+companyMap[c].pending; }));
-
-  grid.innerHTML = companies.map(function(c) {
-    var o = companyMap[c].open;
-    var p = companyMap[c].pending;
-    var total = o + p;
-    var pct = Math.round(total / maxTotal * 100);
-    var ticketItems = companyMap[c].tickets.map(function(t) {
-      var dotColor = t.status === 'Open' ? '#4f8ef7' : '#fbbf24';
-      var contact = t.contact || 'Sin contacto';
-      var subject = t.subject || 'Sin asunto';
-      var id = t.ticketId || '—';
-      return '<div class="ticket-item">'+
-        '<div class="ticket-item-top">'+
-          '<span class="ticket-id">#'+id+'</span>'+
-          '<span class="ticket-status-dot" style="background:'+dotColor+'"></span>'+
-          '<span class="ticket-subject" title="'+subject+'">'+subject+'</span>'+
-        '</div>'+
-        '<div class="ticket-contact">👤 '+contact+'</div>'+
-      '</div>';
+function renderCompanyCards(agentName){
+  document.querySelectorAll('.agent-btn').forEach(function(b){ b.classList.toggle('selected',b.getAttribute('data-agent')===agentName); });
+  var tickets=window._dashTickets||[], grid=document.getElementById('company-cards-grid'); if(!grid)return;
+  var active=tickets.filter(function(t){ return t.agent===agentName&&(t.status==='Open'||t.status==='Pending'); });
+  if(!active.length){ grid.innerHTML='<div class="no-tickets">🎉 '+agentName.split(' ')[0]+' no tiene tickets activos</div>'; return; }
+  var companyMap={};
+  active.forEach(function(t){ var c=t.company||'Sin empresa'; if(!companyMap[c])companyMap[c]={open:0,pending:0,tickets:[]}; if(t.status==='Open')companyMap[c].open++; if(t.status==='Pending')companyMap[c].pending++; companyMap[c].tickets.push(t); });
+  var companies=Object.keys(companyMap).sort(function(a,b){ return(companyMap[b].open+companyMap[b].pending)-(companyMap[a].open+companyMap[a].pending); });
+  var maxT=Math.max.apply(null,companies.map(function(c){ return companyMap[c].open+companyMap[c].pending; }));
+  grid.innerHTML=companies.map(function(c){
+    var o=companyMap[c].open, p=companyMap[c].pending, total=o+p, pct=Math.round(total/maxT*100);
+    var items=companyMap[c].tickets.map(function(t){
+      return'<div class="ticket-item"><div class="ticket-item-top"><span class="ticket-id">#'+t.ticketId+'</span><span class="ticket-status-dot" style="background:'+(t.status==='Open'?'#4f8ef7':'#fbbf24')+'"></span><span class="ticket-subject" title="'+(t.subject||'')+'">'+(t.subject||'Sin asunto')+'</span></div><div class="ticket-contact">👤 '+(t.contact||'Sin contacto')+'</div></div>';
     }).join('');
-
-    return '<div class="company-card" data-company="'+encodeURIComponent(c)+'">'+
-      '<div class="company-card-name" title="'+c+'">'+c+'</div>'+
-      '<div class="company-card-stats">'+
-        '<div class="stat-row">'+
-          '<span class="stat-label"><span class="stat-dot" style="background:#4f8ef7"></span>Abiertos</span>'+
-          '<span class="stat-value" style="color:#4f8ef7">'+o+'</span>'+
-        '</div>'+
-        '<div class="stat-row">'+
-          '<span class="stat-label"><span class="stat-dot" style="background:#fbbf24"></span>Pendientes</span>'+
-          '<span class="stat-value" style="color:#fbbf24">'+p+'</span>'+
-        '</div>'+
-      '</div>'+
-      '<div class="company-card-total">'+
-        '<span class="company-card-total-label">Total activo</span>'+
-        '<span class="company-card-total-value">'+total+'</span>'+
-      '</div>'+
-      '<div class="expand-hint">▼ clic para ver tickets</div>'+
-      '<div class="ticket-list">'+ticketItems+'</div>'+
-      '<div class="company-card-bar"><div class="company-card-bar-fill" style="width:'+pct+'%"></div></div>'+
-    '</div>';
+    return'<div class="company-card"><div class="company-card-name" title="'+c+'">'+c+'</div><div class="company-card-stats"><div class="stat-row"><span class="stat-label"><span class="stat-dot" style="background:#4f8ef7"></span>Abiertos</span><span class="stat-value" style="color:#4f8ef7">'+o+'</span></div><div class="stat-row"><span class="stat-label"><span class="stat-dot" style="background:#fbbf24"></span>Pendientes</span><span class="stat-value" style="color:#fbbf24">'+p+'</span></div></div><div class="company-card-total"><span class="company-card-total-label">Total activo</span><span class="company-card-total-value">'+total+'</span></div><div class="expand-hint">▼ clic para ver tickets</div><div class="ticket-list">'+items+'</div><div class="company-card-bar"><div class="company-card-bar-fill" style="width:'+pct+'%"></div></div></div>';
   }).join('');
-
-  // Asignar expand/colapso a cada tarjeta
   setTimeout(function(){
-    var cards = document.querySelectorAll('#company-cards-grid .company-card');
-    cards.forEach(function(card) {
-      card.addEventListener('click', function() {
-        var list = card.querySelector('.ticket-list');
-        var hint = card.querySelector('.expand-hint');
-        if (!list) return;
-        var isOpen = list.style.display === 'flex';
-        list.style.display = isOpen ? 'none' : 'flex';
-        list.style.flexDirection = 'column';
-        list.style.gap = '6px';
-        if (hint) hint.textContent = isOpen ? '▼ clic para ver tickets' : '▲ clic para cerrar';
-        card.style.borderColor = isOpen ? '' : 'var(--accent)';
+    document.querySelectorAll('#company-cards-grid .company-card').forEach(function(card){
+      card.addEventListener('click',function(){
+        var list=card.querySelector('.ticket-list'), hint=card.querySelector('.expand-hint'); if(!list)return;
+        var isOpen=list.style.display==='flex';
+        list.style.display=isOpen?'none':'flex'; list.style.flexDirection='column'; list.style.gap='6px';
+        if(hint)hint.textContent=isOpen?'▼ clic para ver tickets':'▲ clic para cerrar';
+        card.style.borderColor=isOpen?'':'var(--accent)';
       });
     });
-  }, 0);
+  },0);
 }
 
-reloadData();
+// ── IMPRESORAS ────────────────────────────────────────
+function loadPrinters(){
+  fetch(SHEET_PRINTERS)
+    .then(function(r){ if(!r.ok)throw new Error('HTTP '+r.status); return r.text(); })
+    .then(function(csv){
+      var results=Papa.parse(csv,{header:true,skipEmptyLines:true});
+      if(!results.data||!results.data.length){ document.getElementById('printer-content').innerHTML='<div class="error-box">No se encontraron datos de impresoras.</div>'; return; }
+      renderPrinters(results.data);
+    })
+    .catch(function(err){ document.getElementById('printer-content').innerHTML='<div class="error-box">Error: '+err.message+'</div>'; });
+}
+
+function renderPrinters(raw){
+  var printers=raw.map(function(r){
+    return{
+      name: getField(r,['Nombre','Name','nombre','name'])||'Sin nombre',
+      serial: getField(r,['Numero de serie','Número de serie','Serial','serial','Serial Number'])||'—',
+      pages: parseInt((getField(r,['Total Paginas Impresas','Total Páginas Impresas','Total Pages','pages','paginas'])||'0').replace(/[^0-9]/g,''))||0
+    };
+  }).filter(function(p){ return p.name!=='Sin nombre'||p.pages>0; });
+
+  var totalPages=printers.reduce(function(s,p){ return s+p.pages; },0);
+  var maxPages=Math.max.apply(null,printers.map(function(p){ return p.pages; }).concat([1]));
+
+  // Home summary
+  document.getElementById('home-printers-count').textContent=printers.length;
+  document.getElementById('home-printers-pages').textContent=fmtNum(totalPages);
+
+  var rows=printers.sort(function(a,b){ return b.pages-a.pages; }).map(function(p){
+    var pct=Math.round(p.pages/maxPages*100);
+    return'<tr>'+
+      '<td style="font-weight:500">'+p.name+'</td>'+
+      '<td style="font-family:DM Mono,monospace;color:var(--text3)">'+p.serial+'</td>'+
+      '<td><div style="font-size:13px;font-weight:500;color:var(--accent2)">'+fmtNum(p.pages)+'</div><div class="pages-bar"><div class="pages-bar-fill" style="width:'+pct+'%"></div></div></td>'+
+    '</tr>';
+  }).join('');
+
+  document.getElementById('printer-content').innerHTML=
+    '<div class="printer-kpi-grid">'+
+      '<div class="kpi-card" style="--kpi-color:var(--accent2)"><div class="kpi-label">Total impresoras</div><div class="kpi-value" style="color:var(--accent2)">'+printers.length+'</div><div class="kpi-sub">registradas</div></div>'+
+      '<div class="kpi-card" style="--kpi-color:var(--accent)"><div class="kpi-label">Total paginas impresas</div><div class="kpi-value" style="color:var(--accent);font-size:22px">'+fmtNum(totalPages)+'</div><div class="kpi-sub">suma total</div></div>'+
+      '<div class="kpi-card" style="--kpi-color:var(--green)"><div class="kpi-label">Promedio por impresora</div><div class="kpi-value" style="color:var(--green);font-size:22px">'+fmtNum(Math.round(totalPages/Math.max(printers.length,1)))+'</div><div class="kpi-sub">paginas promedio</div></div>'+
+    '</div>'+
+    '<p class="section-title">Detalle por impresora</p>'+
+    '<div class="printer-table-wrap"><table><thead><tr><th>Nombre</th><th>Numero de serie</th><th>Total paginas impresas</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+
+initAll();
 </script>
 </body>
 </html>
