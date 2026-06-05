@@ -60,6 +60,25 @@ tbody tr:hover td{background:var(--bg3)}
 .b-closed{background:rgba(52,211,153,0.10);color:#86efac}
 .bar-mini{height:4px;border-radius:2px;margin-top:6px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
 @media(max-width:900px){.charts-3{grid-template-columns:1fr}.main{padding:16px}.header{padding:14px}}
+.agent-filter-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.agent-btn{padding:7px 16px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all .2s}
+.agent-btn:hover{border-color:var(--accent);color:var(--accent)}
+.agent-btn.selected{background:rgba(79,142,247,0.15);border-color:var(--accent);color:var(--accent);font-weight:500}
+.company-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:24px}
+.company-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;transition:border-color .2s;position:relative;overflow:hidden}
+.company-card:hover{border-color:var(--border2)}
+.company-card-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.company-card-stats{display:flex;flex-direction:column;gap:8px}
+.stat-row{display:flex;align-items:center;justify-content:space-between}
+.stat-label{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px}
+.stat-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.stat-value{font-size:18px;font-weight:600;letter-spacing:-0.5px}
+.company-card-total{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.company-card-total-label{font-size:11px;color:var(--text3)}
+.company-card-total-value{font-size:13px;font-weight:600;color:var(--text)}
+.company-card-bar{height:3px;position:absolute;bottom:0;left:0;right:0;background:var(--border)}
+.company-card-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s}
+.no-tickets{text-align:center;padding:40px;color:var(--text3);font-size:13px;grid-column:1/-1}
 </style>
 </head>
 <body>
@@ -359,6 +378,13 @@ function renderDashboard(tickets) {
       '<div class="chart-card" style="margin-bottom:0"><div class="chart-title">Por prioridad</div><div class="chart-sub">Nivel de urgencia</div><div id="leg-prio" class="legend"></div><div style="position:relative;height:190px"><canvas id="chart-prio"></canvas></div></div>'+
       '<div class="chart-card" style="margin-bottom:0"><div class="chart-title">Por agente</div><div class="chart-sub">Top agentes</div><div style="position:relative;height:190px"><canvas id="chart-agent"></canvas></div></div>'+
     '</div>'+
+    '<p class="section-title">Panel de trabajo por agente</p>'+
+    '<div class="chart-card" style="margin-bottom:14px">'+
+      '<div class="chart-title">Tickets activos por empresa</div>'+
+      '<div class="chart-sub">Selecciona un agente para ver sus tickets abiertos y pendientes por empresa</div>'+
+      '<div class="agent-filter-row" id="agent-btn-row"></div>'+
+      '<div class="company-cards" id="company-cards-grid"></div>'+
+    '</div>'+
     '<p class="section-title">Resumen por agente</p>'+
     '<div class="table-wrap"><table><thead><tr><th>Agente</th><th>Total</th><th>Abiertos</th><th>Resueltos</th><th>Tiempo res.</th><th>1a resp.</th><th>Carga</th></tr></thead><tbody>'+agentRows+'</tbody></table></div>';
 
@@ -405,6 +431,9 @@ function renderDashboard(tickets) {
   });
 
   // Guardar datos para uso en updateCompanyChart
+  // Guardar datos para panel de agente
+  window._dashAgents = agents;
+  window._dashTickets = tickets;
   window._dashMonthKeys = monthKeys;
   window._dashMonthLabels = monthLabels;
   window._dashCompanyMonthMap = companyMonthMap;
@@ -422,6 +451,10 @@ function renderDashboard(tickets) {
 
   // Render inicial empresa
   updateCompanyChart();
+
+  // Inicializar panel de agente con el primero
+  renderAgentBtns();
+  if (agents.length > 0) renderCompanyCards(agents[0].name);
 
   // Dummy para reemplazar bloque viejo - chart SLA viene abajo
   var _dummy = {
@@ -553,6 +586,85 @@ function updateCompanyChart() {
       }
     }
   });
+}
+
+function renderAgentBtns() {
+  var agents = window._dashAgents || [];
+  var row = document.getElementById('agent-btn-row');
+  if (!row) return;
+  row.innerHTML = agents.map(function(a, i) {
+    return '<button class="agent-btn" data-idx="'+i+'" data-agent="">'+a.name.split(' ')[0]+'</button>';
+  }).join('');
+  // Asignar eventos y nombres via JS para evitar problemas con caracteres especiales
+  var btns = row.querySelectorAll('.agent-btn');
+  btns.forEach(function(btn, i) {
+    btn.setAttribute('data-agent', agents[i].name);
+    btn.addEventListener('click', function() { renderCompanyCards(agents[i].name); });
+  });
+  if (btns.length) btns[0].classList.add('selected');
+}
+
+function renderCompanyCards(agentName) {
+  // Actualizar botones
+  var btns = document.querySelectorAll('.agent-btn');
+  btns.forEach(function(b) {
+    b.classList.toggle('selected', b.getAttribute('data-agent') === agentName);
+  });
+
+  var tickets = window._dashTickets || [];
+  var grid = document.getElementById('company-cards-grid');
+  if (!grid) return;
+
+  // Filtrar tickets activos (open o pending) del agente
+  var active = tickets.filter(function(t) {
+    return t.agent === agentName && (t.status === 'Open' || t.status === 'Pending');
+  });
+
+  if (active.length === 0) {
+    grid.innerHTML = '<div class="no-tickets">🎉 '+agentName.split(' ')[0]+' no tiene tickets abiertos ni pendientes en el periodo seleccionado</div>';
+    return;
+  }
+
+  // Agrupar por empresa
+  var companyMap = {};
+  active.forEach(function(t) {
+    var c = t.company || 'Sin empresa';
+    if (!companyMap[c]) companyMap[c] = {open:0, pending:0};
+    if (t.status === 'Open') companyMap[c].open++;
+    if (t.status === 'Pending') companyMap[c].pending++;
+  });
+
+  // Ordenar por total descendente
+  var companies = Object.keys(companyMap).sort(function(a,b) {
+    return (companyMap[b].open+companyMap[b].pending) - (companyMap[a].open+companyMap[a].pending);
+  });
+
+  var maxTotal = Math.max.apply(null, companies.map(function(c){ return companyMap[c].open+companyMap[c].pending; }));
+
+  grid.innerHTML = companies.map(function(c) {
+    var o = companyMap[c].open;
+    var p = companyMap[c].pending;
+    var total = o + p;
+    var pct = Math.round(total / maxTotal * 100);
+    return '<div class="company-card">'+
+      '<div class="company-card-name" title="'+c+'">'+c+'</div>'+
+      '<div class="company-card-stats">'+
+        '<div class="stat-row">'+
+          '<span class="stat-label"><span class="stat-dot" style="background:#4f8ef7"></span>Abiertos</span>'+
+          '<span class="stat-value" style="color:#4f8ef7">'+o+'</span>'+
+        '</div>'+
+        '<div class="stat-row">'+
+          '<span class="stat-label"><span class="stat-dot" style="background:#fbbf24"></span>Pendientes</span>'+
+          '<span class="stat-value" style="color:#fbbf24">'+p+'</span>'+
+        '</div>'+
+      '</div>'+
+      '<div class="company-card-total">'+
+        '<span class="company-card-total-label">Total activo</span>'+
+        '<span class="company-card-total-value">'+total+'</span>'+
+      '</div>'+
+      '<div class="company-card-bar"><div class="company-card-bar-fill" style="width:'+pct+'%"></div></div>'+
+    '</div>';
+  }).join('');
 }
 
 reloadData();
