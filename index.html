@@ -580,6 +580,13 @@ function loadPrinters(){
 }
 
 function renderPrinters(raw){
+  // Obtener fecha de informe (puede estar en cualquier fila)
+  var fechaInforme = '';
+  raw.forEach(function(r){
+    var f = getField(r,['Fecha de Informe','Fecha de informe','fecha de informe','Fecha Informe']);
+    if(f && !fechaInforme) fechaInforme = f;
+  });
+
   var printers=raw.map(function(r){
     return{
       name: getField(r,['Nombre','Name','nombre','name'])||'Sin nombre',
@@ -609,6 +616,7 @@ function renderPrinters(raw){
       '<div class="kpi-card" style="--kpi-color:var(--accent2)"><div class="kpi-label">Total impresoras</div><div class="kpi-value" style="color:var(--accent2)">'+printers.length+'</div><div class="kpi-sub">registradas</div></div>'+
       '<div class="kpi-card" style="--kpi-color:var(--accent)"><div class="kpi-label">Total paginas impresas</div><div class="kpi-value" style="color:var(--accent);font-size:22px">'+fmtNum(totalPages)+'</div><div class="kpi-sub">suma total</div></div>'+
       '<div class="kpi-card" style="--kpi-color:var(--green)"><div class="kpi-label">Promedio por impresora</div><div class="kpi-value" style="color:var(--green);font-size:22px">'+fmtNum(Math.round(totalPages/Math.max(printers.length,1)))+'</div><div class="kpi-sub">paginas promedio</div></div>'+
+      '<div class="kpi-card" style="--kpi-color:var(--amber)"><div class="kpi-label">Fecha de informe</div><div class="kpi-value" style="color:var(--amber);font-size:20px">'+(fechaInforme||'—')+'</div><div class="kpi-sub">ultima actualizacion</div></div>'+
     '</div>'+
     '<p class="section-title">Detalle por impresora</p>'+
     '<div class="printer-table-wrap"><table><thead><tr><th>Nombre</th><th>Numero de serie</th><th>Total paginas impresas</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
