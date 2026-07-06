@@ -579,47 +579,117 @@ function loadPrinters(){
     .catch(function(err){ document.getElementById('printer-content').innerHTML='<div class="error-box">Error: '+err.message+'</div>'; });
 }
 
-function renderPrinters(raw){
-  // Obtener fecha de informe (puede estar en cualquier fila)
-  var fechaInforme = '';
-  raw.forEach(function(r){
-    var f = getField(r,['Fecha de Informe','Fecha de informe','fecha de informe','Fecha Informe']);
-    if(f && !fechaInforme) fechaInforme = f;
-  });
+function parseDateCol(str) {
+  // DD-MM-YYYY
+  var m = str && str.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+  if (m) return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]));
+  return null;
+}
 
-  var printers=raw.map(function(r){
-    return{
-      name: getField(r,['Nombre','Name','nombre','name'])||'Sin nombre',
-      serial: getField(r,['Numero de serie','Número de serie','Serial','serial','Serial Number'])||'—',
-      pages: parseInt((getField(r,['Total Paginas Impresas','Total Páginas Impresas','Total Pages','pages','paginas'])||'0').replace(/[^0-9]/g,''))||0
+function renderPrinters(raw) {
+  if (!raw || !raw.length) return;
+
+  // Detectar columnas de fecha (encabezados DD-MM-YYYY)
+  var headers = Object.keys(raw[0]);
+  var dateCols = headers.filter(function(h) { return parseDateCol(h); });
+  dateCols.sort(function(a,b) { return parseDateCol(a)-parseDateCol(b); });
+
+  var lastCol  = dateCols[dateCols.length-1] || null;
+  var prevCol  = dateCols[dateCols.length-2] || null;
+  var nameCol  = headers.find(function(h){ return h.toLowerCase().includes('nombre')||h.toLowerCase()==='name'; }) || headers[0];
+  var serialCol= headers.find(function(h){ return h.toLowerCase().includes('serie')||h.toLowerCase().includes('serial'); }) || '';
+
+  // Construir lista de impresoras
+  var printers = raw.map(function(r) {
+    var last  = parseInt((r[lastCol]||'0').toString().replace(/[^0-9]/g,'')) || 0;
+    var prev  = prevCol ? (parseInt((r[prevCol]||'0').toString().replace(/[^0-9]/g,'')) || 0) : 0;
+    return {
+      name:   (r[nameCol]||'').trim(),
+      serial: serialCol ? (r[serialCol]||'—').trim() : '—',
+      pages:  last,
+      diff:   prevCol ? Math.max(last - prev, 0) : null
     };
-  }).filter(function(p){ return p.name!=='Sin nombre'||p.pages>0; });
+  }).filter(function(p){ return p.name && p.pages > 0; });
 
-  var totalPages=printers.reduce(function(s,p){ return s+p.pages; },0);
-  var maxPages=Math.max.apply(null,printers.map(function(p){ return p.pages; }).concat([1]));
+  var totalPages     = printers.reduce(function(s,p){ return s+p.pages; }, 0);
+  var totalDiff      = prevCol ? printers.reduce(function(s,p){ return s+(p.diff||0); }, 0) : null;
+  var maxPages       = Math.max.apply(null, printers.map(function(p){ return p.pages; }).concat([1]));
+  var maxDiff        = prevCol ? Math.max.apply(null, printers.map(function(p){ return p.diff||0; }).concat([1])) : 1;
 
   // Home summary
-  document.getElementById('home-printers-count').textContent=printers.length;
-  document.getElementById('home-printers-pages').textContent=fmtNum(totalPages);
+  document.getElementById('home-printers-count').textContent = printers.length;
+  document.getElementById('home-printers-pages').textContent = fmtNum(totalPages);
 
-  var rows=printers.sort(function(a,b){ return b.pages-a.pages; }).map(function(p){
-    var pct=Math.round(p.pages/maxPages*100);
-    return'<tr>'+
+  // Tabla
+  var hasDiff = prevCol !== null;
+  var theadExtra = hasDiff ? '<th>Paginas '+lastCol+'</th><th>Diferencia vs '+prevCol+'</th>' : '<th>Paginas '+lastCol+'</th>';
+  var rows = printers.slice().sort(function(a,b){ return b.pages-a.pages; }).map(function(p){
+    var pct     = Math.round(p.pages/maxPages*100);
+    var diffPct = hasDiff ? Math.round((p.diff||0)/maxDiff*100) : 0;
+    var diffCell = hasDiff
+      ? '<td><div style="font-size:13px;font-weight:500;color:var(--green)">+'+fmtNum(p.diff||0)+'</div><div class="pages-bar"><div class="pages-bar-fill" style="width:'+diffPct+'%;background:linear-gradient(90deg,var(--green),var(--teal))"></div></div></td>'
+      : '';
+    return '<tr>'+
       '<td style="font-weight:500">'+p.name+'</td>'+
       '<td style="font-family:DM Mono,monospace;color:var(--text3)">'+p.serial+'</td>'+
       '<td><div style="font-size:13px;font-weight:500;color:var(--accent2)">'+fmtNum(p.pages)+'</div><div class="pages-bar"><div class="pages-bar-fill" style="width:'+pct+'%"></div></div></td>'+
+      diffCell+
     '</tr>';
   }).join('');
 
-  document.getElementById('printer-content').innerHTML=
+  // Gráfico evolución mensual (top 6 impresoras)
+  var top6 = printers.slice().sort(function(a,b){ return b.pages-a.pages; }).slice(0,6);
+  var chartColors = ['#4f8ef7','#7c5cfc','#34d399','#fbbf24','#f87171','#22d3ee'];
+  var monthTotals = dateCols.map(function(col){
+    return printers.reduce(function(s,p){ return s+(parseInt((raw.find(function(r){ return (r[nameCol]||'').trim()===p.name; })||{})[col]||0)); },0);
+  });
+
+  document.getElementById('printer-content').innerHTML =
     '<div class="printer-kpi-grid">'+
       '<div class="kpi-card" style="--kpi-color:var(--accent2)"><div class="kpi-label">Total impresoras</div><div class="kpi-value" style="color:var(--accent2)">'+printers.length+'</div><div class="kpi-sub">registradas</div></div>'+
-      '<div class="kpi-card" style="--kpi-color:var(--accent)"><div class="kpi-label">Total paginas impresas</div><div class="kpi-value" style="color:var(--accent);font-size:22px">'+fmtNum(totalPages)+'</div><div class="kpi-sub">suma total</div></div>'+
-      '<div class="kpi-card" style="--kpi-color:var(--green)"><div class="kpi-label">Promedio por impresora</div><div class="kpi-value" style="color:var(--green);font-size:22px">'+fmtNum(Math.round(totalPages/Math.max(printers.length,1)))+'</div><div class="kpi-sub">paginas promedio</div></div>'+
-      '<div class="kpi-card" style="--kpi-color:var(--amber)"><div class="kpi-label">Fecha de informe</div><div class="kpi-value" style="color:var(--amber);font-size:20px">'+(fechaInforme||'—')+'</div><div class="kpi-sub">ultima actualizacion</div></div>'+
+      '<div class="kpi-card" style="--kpi-color:var(--accent)"><div class="kpi-label">Total paginas ('+lastCol+')</div><div class="kpi-value" style="color:var(--accent);font-size:20px">'+fmtNum(totalPages)+'</div><div class="kpi-sub">acumulado</div></div>'+
+      (hasDiff?'<div class="kpi-card" style="--kpi-color:var(--green)"><div class="kpi-label">Paginas del mes</div><div class="kpi-value" style="color:var(--green);font-size:20px">'+fmtNum(totalDiff)+'</div><div class="kpi-sub">vs '+prevCol+'</div></div>':'') +
+      '<div class="kpi-card" style="--kpi-color:var(--green)"><div class="kpi-label">Promedio por impresora</div><div class="kpi-value" style="color:var(--green);font-size:20px">'+fmtNum(Math.round(totalPages/Math.max(printers.length,1)))+'</div><div class="kpi-sub">paginas promedio</div></div>'+
+      '<div class="kpi-card" style="--kpi-color:var(--amber)"><div class="kpi-label">Ultima actualizacion</div><div class="kpi-value" style="color:var(--amber);font-size:20px">'+(lastCol||'—')+'</div><div class="kpi-sub">fecha del contador</div></div>'+
     '</div>'+
+    (dateCols.length>1?
+      '<p class="section-title">Evolucion total de paginas por mes</p>'+
+      '<div class="chart-card">'+
+        '<div class="chart-title">Total paginas impresas por mes</div>'+
+        '<div class="chart-sub">Suma de todas las impresoras</div>'+
+        '<div style="position:relative;height:220px"><canvas id="chart-printer-total"></canvas></div>'+
+      '</div>'
+    :'')+
     '<p class="section-title">Detalle por impresora</p>'+
-    '<div class="printer-table-wrap"><table><thead><tr><th>Nombre</th><th>Numero de serie</th><th>Total paginas impresas</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+    '<div class="printer-table-wrap"><table><thead><tr><th>Nombre</th><th>Numero de serie</th>'+theadExtra+'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+
+  // Gráfico total mensual
+  if (dateCols.length > 1) {
+    destroyChart('printer-total');
+    charts['printer-total'] = new Chart(document.getElementById('chart-printer-total'), {
+      type: 'line',
+      data: {
+        labels: dateCols,
+        datasets: [{
+          label: 'Total paginas',
+          data: monthTotals,
+          borderColor: '#7c5cfc',
+          backgroundColor: 'rgba(124,92,252,0.08)',
+          fill: true, tension: 0.3, borderWidth: 2,
+          pointRadius: 4, pointBackgroundColor: '#7c5cfc',
+          pointBorderColor: '#0f1117', pointBorderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend:{display:false}, tooltip:{mode:'index',intersect:false} },
+        scales: {
+          x: { ticks:{color:'#555e78',font:{size:11}}, grid:{display:false} },
+          y: { beginAtZero:false, ticks:{color:'#555e78',font:{size:11}}, grid:{color:'rgba(255,255,255,0.04)'} }
+        }
+      }
+    });
+  }
 }
 
 initAll();
