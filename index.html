@@ -622,17 +622,24 @@ function renderPrinters(raw) {
 
   // Tabla
   var hasDiff = prevCol !== null;
-  var theadExtra = hasDiff ? '<th>Paginas '+lastCol+'</th><th>Diferencia vs '+prevCol+'</th>' : '<th>Paginas '+lastCol+'</th>';
-  var rows = printers.slice().sort(function(a,b){ return b.pages-a.pages; }).map(function(p){
-    var pct     = Math.round(p.pages/maxPages*100);
+  // Mostrar todas las columnas de fecha + diferencia
+  var theadCols = dateCols.map(function(col){ return '<th>'+col+'</th>'; }).join('');
+  var theadExtra = theadCols + (hasDiff ? '<th>Diferencia</th>' : '');
+
+  var rows = printers.slice().sort(function(a,b){ return b.diff!==null ? (b.diff||0)-(a.diff||0) : b.pages-a.pages; }).map(function(p){
     var diffPct = hasDiff ? Math.round((p.diff||0)/maxDiff*100) : 0;
+    // Celdas por cada columna de fecha
+    var dateCells = dateCols.map(function(col){
+      var val = parseInt((raw.find(function(r){ return (r[nameCol]||'').trim()===p.name; })||{})[col]||0);
+      return '<td style="font-family:DM Mono,monospace;color:var(--text2)">'+fmtNum(val)+'</td>';
+    }).join('');
     var diffCell = hasDiff
-      ? '<td><div style="font-size:13px;font-weight:500;color:var(--green)">+'+fmtNum(p.diff||0)+'</div><div class="pages-bar"><div class="pages-bar-fill" style="width:'+diffPct+'%;background:linear-gradient(90deg,var(--green),var(--teal))"></div></div></td>'
+      ? '<td><div style="font-size:13px;font-weight:600;color:var(--green)">+'+fmtNum(p.diff||0)+'</div><div class="pages-bar"><div class="pages-bar-fill" style="width:'+diffPct+'%;background:linear-gradient(90deg,var(--green),var(--teal))"></div></div></td>'
       : '';
     return '<tr>'+
       '<td style="font-weight:500">'+p.name+'</td>'+
-      '<td style="font-family:DM Mono,monospace;color:var(--text3)">'+p.serial+'</td>'+
-      '<td><div style="font-size:13px;font-weight:500;color:var(--accent2)">'+fmtNum(p.pages)+'</div><div class="pages-bar"><div class="pages-bar-fill" style="width:'+pct+'%"></div></div></td>'+
+      '<td style="font-family:DM Mono,monospace;color:var(--text3);font-size:11px">'+p.serial+'</td>'+
+      dateCells+
       diffCell+
     '</tr>';
   }).join('');
