@@ -370,10 +370,15 @@ function renderDashboard(tickets){
       '</div>'+
       '<div class="card"><div class="card-title">Tickets abiertos por antiguedad</div><div class="opendays-wrap" id="opendays-wrap"></div></div>'+
     '</div>'+
-    // Row 2: SLA
-    '<div class="grid-2" style="margin-bottom:14px">'+
-      '<div class="card"><div class="card-title">SLA por mes — Within vs Violated</div><div style="position:relative;height:180px"><canvas id="chart-sla"></canvas></div></div>'+
-      '<div class="card"><div class="card-title">Tickets abiertos por antiguedad</div><div class="opendays-wrap" id="opendays-wrap"></div></div>'+
+
+    // SLA completo ancho
+    '<div class="card" style="margin-bottom:14px">'+
+      '<div class="card-title">SLA por mes — Within SLA vs Violated</div>'+
+      '<div style="display:flex;gap:16px;margin-bottom:10px">'+
+        '<span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:3px;background:rgba(118,158,51,0.7);display:inline-block"></span>Within SLA</span>'+
+        '<span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:3px;background:rgba(231,76,60,0.7);display:inline-block"></span>SLA Violated</span>'+
+      '</div>'+
+      '<div style="position:relative;height:260px"><canvas id="chart-sla"></canvas></div>'+
     '</div>'+
     // Row 3: company selector
     '<div class="card" style="margin-bottom:14px"><div class="card-title">Creados vs Resueltos por empresa</div>'+
