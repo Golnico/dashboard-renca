@@ -401,13 +401,16 @@ function renderDashboard(tickets){
 
   // Lollipop removido
 
-  // Open days - setTimeout para asegurar que el canvas esté en el DOM
+  // Open days - crear canvas desde JS después de que el DOM esté listo
   destroyChart('opendays');
   var _dayBuckets=dayBuckets.slice(), _dayLabels=dayLabels.slice();
   setTimeout(function(){
-    var odCanvas=document.getElementById('chart-opendays');
-    if(!odCanvas)return;
-    charts['opendays']=new Chart(odCanvas,{
+    var container=document.getElementById('opendays-container');
+    if(!container)return;
+    container.innerHTML='';
+    var canvas=document.createElement('canvas');
+    container.appendChild(canvas);
+    charts['opendays']=new Chart(canvas,{
       type:'bar',
       data:{
         labels:_dayLabels,
@@ -430,7 +433,7 @@ function renderDashboard(tickets){
         }
       }
     });
-  },50);
+  },100);
 
   // Type bars
   var typeEl=document.getElementById('type-bars');
