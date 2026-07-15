@@ -401,16 +401,18 @@ function renderDashboard(tickets){
 
   // Lollipop removido
 
-  // Open days - canvas ya está en el HTML
+  // Open days - setTimeout para asegurar que el canvas esté en el DOM
   destroyChart('opendays');
-  var odCanvas=document.getElementById('chart-opendays');
-  if(odCanvas){
+  var _dayBuckets=dayBuckets.slice(), _dayLabels=dayLabels.slice();
+  setTimeout(function(){
+    var odCanvas=document.getElementById('chart-opendays');
+    if(!odCanvas)return;
     charts['opendays']=new Chart(odCanvas,{
       type:'bar',
       data:{
-        labels:dayLabels,
+        labels:_dayLabels,
         datasets:[{
-          data:dayBuckets,
+          data:_dayBuckets,
           backgroundColor:'rgba(118,158,51,0.75)',
           borderRadius:6,
           borderSkipped:false
@@ -428,7 +430,7 @@ function renderDashboard(tickets){
         }
       }
     });
-  }
+  },50);
 
   // Type bars
   var typeEl=document.getElementById('type-bars');
@@ -454,6 +456,7 @@ function renderDashboard(tickets){
   charts['monthly']=new Chart(document.getElementById('chart-monthly'),{
     type:'line',
     data:{labels:monthLabels,datasets:[
+      {label:'Total',data:monthKeys.map(function(k){return monthMap[k].total||0;}),borderColor:'#1a1f36',backgroundColor:'transparent',tension:0.4,borderWidth:2,borderDash:[4,3],pointRadius:2,pointBackgroundColor:'#1a1f36'},
       {label:'Open',data:monthKeys.map(function(k){return monthMap[k].open||0;}),borderColor:'#769e33',backgroundColor:'rgba(118,158,51,0.08)',fill:true,tension:0.4,borderWidth:2,pointRadius:2,pointBackgroundColor:'#769e33'},
       {label:'Resolved',data:monthKeys.map(function(k){return monthMap[k].resolved||0;}),borderColor:'#2ecc71',backgroundColor:'transparent',tension:0.4,borderWidth:2,pointRadius:2,pointBackgroundColor:'#2ecc71'},
       {label:'Closed',data:monthKeys.map(function(k){return monthMap[k].closed||0;}),borderColor:'#0ea5e9',backgroundColor:'transparent',tension:0.4,borderWidth:1.5,borderDash:[4,3],pointRadius:2,pointBackgroundColor:'#0ea5e9'},
