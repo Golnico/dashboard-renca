@@ -221,7 +221,8 @@ function loadData(){
           company:(getField(r,['Nombre de la empresa','Company Name'])||'Sin empresa').trim(),
           ticketId:getField(r,['ID del ticket','Ticket ID']),
           subject:getField(r,['Asunto','Subject']),
-          contact:getField(r,['Nombre completo','Full Name'])
+          contact:getField(r,['Nombre completo','Full Name']),
+          type:(getField(r,['Tipo','Type','tipo','type'])||'Sin tipo').trim()
         };
       });
       document.getElementById('last-update').textContent='Actualizado '+new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
@@ -321,6 +322,16 @@ function renderDashboard(tickets){
   var maxDayBucket=Math.max.apply(null,dayBuckets.concat([1]));
 
   // Max status for bars
+  // Tipos con tickets activos (open o pending)
+  var typeMap={};
+  tickets.filter(function(t){return t.status==='Open'||t.status==='Pending';}).forEach(function(t){
+    var tp=t.type||'Sin tipo';
+    if(!typeMap[tp])typeMap[tp]=0;
+    typeMap[tp]++;
+  });
+  var typeEntries=Object.keys(typeMap).map(function(k){return{name:k,count:typeMap[k]};}).sort(function(a,b){return b.count-a.count;});
+  var maxType=typeEntries.length?typeEntries[0].count:1;
+
   var maxStatus=Math.max(open,pending,resolved,closed,1);
   var maxAgent=Math.max.apply(null,agents.map(function(a){return a.total;}).concat([1]));
 
@@ -348,8 +359,15 @@ function renderDashboard(tickets){
       '<div class="card"><div class="card-title">Tendencia mensual</div><div style="position:relative;height:200px"><canvas id="chart-monthly"></canvas></div></div>'+
       '<div class="card"><div class="card-title">Por prioridad</div><div class="lollipop-wrap" id="lollipop-wrap"></div></div>'+
     '</div>'+
-    // Row 2: SLA | open days
-    '<div class="grid-2">'+
+    // Tipos activos
+    '<div class="grid-2" style="margin-bottom:14px">'+
+      '<div class="card"><div class="card-title">Tickets activos por tipo (Open + Pending)</div>'+
+        '<div id="type-bars"></div>'+
+      '</div>'+
+      '<div class="card"><div class="card-title">Tickets abiertos por antiguedad</div><div class="opendays-wrap" id="opendays-wrap"></div></div>'+
+    '</div>'+
+    // Row 2: SLA
+    '<div class="grid-2" style="margin-bottom:14px">'+
       '<div class="card"><div class="card-title">SLA por mes — Within vs Violated</div><div style="position:relative;height:180px"><canvas id="chart-sla"></canvas></div></div>'+
       '<div class="card"><div class="card-title">Tickets abiertos por antiguedad</div><div class="opendays-wrap" id="opendays-wrap"></div></div>'+
     '</div>'+
@@ -386,6 +404,25 @@ function renderDashboard(tickets){
     var h=Math.max(Math.round(v/maxOD*80),v>0?4:0);
     return'<div class="od-col"><div class="od-val">'+(v||'')+'</div><div class="od-bar" style="height:'+h+'px"></div><div class="od-label">'+dayLabels[i]+' dias</div></div>';
   }).join('');
+
+  // Type bars
+  var typeEl=document.getElementById('type-bars');
+  if(typeEl){
+    if(!typeEntries.length){
+      typeEl.innerHTML='<p style="color:var(--text3);font-size:12px;text-align:center;padding:20px">No hay tickets activos</p>';
+    } else {
+      typeEl.innerHTML=typeEntries.map(function(e){
+        var pct2=Math.round(e.count/maxType*100);
+        // Acortar nombre si es muy largo
+        var shortName=e.name.replace('TI - ','');
+        return'<div class="status-bar-row">'+
+          '<div class="status-bar-label" style="width:160px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+e.name+'">'+shortName+'</div>'+
+          '<div class="status-bar-track"><div class="status-bar-fill" style="width:'+pct2+'%"></div></div>'+
+          '<div class="status-bar-val" style="width:40px">'+e.count+'</div>'+
+        '</div>';
+      }).join('');
+    }
+  }
 
   // Chart monthly trend
   destroyChart('monthly');
