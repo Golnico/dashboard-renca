@@ -307,11 +307,11 @@ function renderDashboard(tickets){
   var prioCounts=priorities.map(function(p){return tickets.filter(function(t){return t.priority===p;}).length;});
   var maxPrio=Math.max.apply(null,prioCounts.concat([1]));
 
-  // Open days buckets
+  // Open days buckets - usa TODOS los tickets open/pending sin filtro de fecha
   var dayBuckets=[0,0,0,0,0];
-  var dayLabels=['1-5','6-10','11-15','16-20','>20'];
+  var dayLabels=['1-5 dias','6-10 dias','11-15 dias','16-20 dias','>20 dias'];
   var now=new Date();
-  tickets.filter(function(t){return t.status==='Open'&&t.created&&!isNaN(t.created);}).forEach(function(t){
+  allTickets.filter(function(t){return (t.status==='Open'||t.status==='Pending')&&t.created&&!isNaN(t.created);}).forEach(function(t){
     var days=Math.floor((now-t.created)/86400000);
     if(days<=5)dayBuckets[0]++;
     else if(days<=10)dayBuckets[1]++;
@@ -348,16 +348,20 @@ function renderDashboard(tickets){
       '<div class="kpi-card"><div class="kpi-left"><div class="kpi-value">'+overdue+'</div><div class="kpi-label">SLA Violado</div></div>'+sparkBars('var(--red)')+'</div>'+
       '<div class="kpi-card"><div class="kpi-left"><div class="kpi-value">'+(avgResp>0?avgResp.toFixed(1)+'h':'N/A')+'</div><div class="kpi-label">1a Resp. prom.</div></div>'+sparkBars('#0ea5e9')+'</div>'+
     '</div>'+
-    // Row 1: status bars | weekly trend | priority lollipop
-    '<div class="grid-3">'+
-      '<div class="card"><div class="card-title">Por estado</div>'+
+    // Row 1: estado activo | tendencia mensual (grande)
+    '<div class="grid-2-1" style="margin-bottom:14px">'+
+      '<div class="card"><div class="card-title">Tendencia mensual</div><div style="position:relative;height:220px"><canvas id="chart-monthly"></canvas></div></div>'+
+      '<div class="card"><div class="card-title">Por estado — activos</div>'+
+        '<div style="margin-bottom:12px;padding:12px;background:var(--primary-light);border-radius:8px;display:flex;justify-content:space-between;align-items:center">'+
+          '<div><div style="font-size:28px;font-weight:700;color:var(--primary);letter-spacing:-1px">'+(open+pending)+'</div><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Open + Pending</div></div>'+
+          '<div style="text-align:right"><div style="font-size:13px;color:var(--text2)"><span style="font-weight:600;color:var(--primary)">'+open+'</span> abiertos</div><div style="font-size:13px;color:var(--text2)"><span style="font-weight:600;color:var(--amber)">'+pending+'</span> pendientes</div></div>'+
+        '</div>'+
         ['Open','Pending','Resolved','Closed'].map(function(s,i){
           var counts=[open,pending,resolved,closed];
-          return'<div class="status-bar-row"><div class="status-bar-label">'+s+'</div><div class="status-bar-track"><div class="status-bar-fill" style="width:'+pct(counts[i],maxStatus)+'%"></div></div><div class="status-bar-val">'+fmtNum(counts[i])+'<span style="color:var(--text3);font-size:10px;font-weight:400"> ('+pct(counts[i],total)+'%)</span></div></div>';
+          var colors=['var(--primary)','var(--amber)','var(--green)','var(--teal)'];
+          return'<div class="status-bar-row"><div class="status-bar-label">'+s+'</div><div class="status-bar-track"><div class="status-bar-fill" style="width:'+pct(counts[i],maxStatus)+'%;background:'+colors[i]+'"></div></div><div class="status-bar-val">'+fmtNum(counts[i])+'<span style="color:var(--text3);font-size:10px;font-weight:400"> ('+pct(counts[i],total)+'%)</span></div></div>';
         }).join('')+
       '</div>'+
-      '<div class="card"><div class="card-title">Tendencia mensual</div><div style="position:relative;height:200px"><canvas id="chart-monthly"></canvas></div></div>'+
-      '<div class="card"><div class="card-title">Por prioridad</div><div class="lollipop-wrap" id="lollipop-wrap"></div></div>'+
     '</div>'+
     // Tipos activos
     '<div class="grid-2" style="margin-bottom:14px">'+
@@ -390,20 +394,39 @@ function renderDashboard(tickets){
     }).join('')+
     '</tbody></table></div>';
 
-  // Lollipop prioridad
-  var lollipopEl=document.getElementById('lollipop-wrap');
-  lollipopEl.innerHTML=priorities.map(function(p,i){
-    var h=Math.max(Math.round(prioCounts[i]/maxPrio*70),8);
-    return'<div class="lollipop"><div class="lollipop-circle">'+prioCounts[i]+'</div><div class="lollipop-stem" style="height:'+h+'px"></div><div class="lollipop-label">'+p+'</div></div>';
-  }).join('');
+  // Lollipop removido
 
-  // Open days bars
+  // Open days - usar canvas Chart.js
   var odEl=document.getElementById('opendays-wrap');
-  var maxOD=Math.max.apply(null,dayBuckets.concat([1]));
-  odEl.innerHTML=dayBuckets.map(function(v,i){
-    var h=Math.max(Math.round(v/maxOD*80),v>0?4:0);
-    return'<div class="od-col"><div class="od-val">'+(v||'')+'</div><div class="od-bar" style="height:'+h+'px"></div><div class="od-label">'+dayLabels[i]+' dias</div></div>';
-  }).join('');
+  if(odEl) odEl.innerHTML='<canvas id="chart-opendays"></canvas>';
+  destroyChart('opendays');
+  setTimeout(function(){
+    var canvas=document.getElementById('chart-opendays');
+    if(!canvas)return;
+    charts['opendays']=new Chart(canvas,{
+      type:'bar',
+      data:{
+        labels:dayLabels,
+        datasets:[{
+          data:dayBuckets,
+          backgroundColor:'rgba(118,158,51,0.75)',
+          borderRadius:6,
+          borderSkipped:false
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{display:false},
+          tooltip:{callbacks:{label:function(ctx){return' '+ctx.parsed.y+' tickets';}}}
+        },
+        scales:{
+          x:{ticks:{color:'#a0aec0',font:{size:10}},grid:{display:false}},
+          y:{beginAtZero:true,ticks:{color:'#a0aec0',font:{size:10},stepSize:1},grid:{color:'rgba(0,0,0,0.04)'}}
+        }
+      }
+    });
+  },0);
 
   // Type bars
   var typeEl=document.getElementById('type-bars');
