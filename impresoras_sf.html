@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impresoras SF · Proceso y Tecnologia</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+:root{--bg:#0f1117;--bg2:#161b27;--bg3:#1e2535;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--text:#e8eaf0;--text2:#8b92a8;--text3:#555e78;--accent:#4f8ef7;--accent2:#7c5cfc;--green:#34d399;--amber:#fbbf24;--red:#f87171;--teal:#22d3ee;--radius:12px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6}
+.header{padding:16px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(15,17,23,0.95);backdrop-filter:blur(12px);z-index:100}
+.header-left{display:flex;align-items:center;gap:12px}
+.back-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;text-decoration:none;transition:all .15s;display:flex;align-items:center;gap:5px}
+.back-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+.logo{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent2),var(--teal));display:flex;align-items:center;justify-content:center;font-size:16px}
+.header h1{font-size:15px;font-weight:600;color:var(--text);letter-spacing:-0.2px}
+.header-sub{font-size:11px;color:var(--text2);margin-top:1px}
+.last-update{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+.refresh-btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all .15s}
+.refresh-btn:hover{background:var(--bg2);color:var(--text);border-color:var(--accent2)}
+.main{padding:20px 28px;max-width:1400px;margin:0 auto}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--kpi-color,var(--accent2));opacity:.7}
+.kpi-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.kpi-value{font-size:26px;font-weight:600;color:var(--text);letter-spacing:-1px;line-height:1}
+.kpi-sub{font-size:11px;color:var(--text2);margin-top:6px}
+.section-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;margin-top:24px}
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:14px}
+.chart-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px}
+.chart-sub{font-size:11px;color:var(--text3);margin-bottom:12px}
+.table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{padding:10px 14px;text-align:left;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;background:var(--bg3);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--bg3)}
+.pages-bar{height:6px;border-radius:3px;background:var(--bg3);margin-top:5px}
+.pages-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .5s}
+.diff-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--green),var(--teal));transition:width .5s}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:50vh;gap:16px}
+.spinner{width:36px;height:36px;border:2px solid var(--border2);border-top-color:var(--accent2);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading p{color:var(--text2);font-size:13px}
+.error-box{background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:var(--radius);padding:20px 24px;color:#fca5a5;font-size:13px}
+@media(max-width:900px){.main{padding:16px}.header{padding:14px 16px}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <a class="back-btn" href="index.html">← Inicio</a>
+    <div class="logo">🖨️</div>
+    <div>
+      <h1>Impresoras SF</h1>
+      <div class="header-sub">Contadores de impresion · Municipalidad de Renca</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="last-update" id="last-update"></span>
+    <button class="refresh-btn" onclick="loadData()">↻ Actualizar</button>
+  </div>
+</header>
+
+<main class="main">
+  <div id="content">
+    <div class="loading"><div class="spinner"></div><p>Cargando datos desde Google Sheets...</p></div>
+  </div>
+</main>
+
+<script>
+var SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ1f3IBca3MrvNThStVb46n7VF28EKIWbty36-LX9b7l8FmiCjC5TM_rKL-DS1XWkjdJrISXcGDLDZE/pub?gid=1368369951&single=true&output=csv';
+var charts = {};
+
+function destroyChart(id){ if(charts[id]){ charts[id].destroy(); delete charts[id]; } }
+function fmtNum(n){ return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+function getField(row,names){ for(var i=0;i<names.length;i++) if(row[names[i]]!==undefined&&row[names[i]]!=='') return row[names[i]]; return ''; }
+
+function parseDateCol(str){
+  var m = str && str.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+  if(m) return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]));
+  return null;
+}
+
+function loadData(){
+  document.getElementById('content').innerHTML='<div class="loading"><div class="spinner"></div><p>Cargando datos...</p></div>';
+  fetch(SHEET_URL)
+    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
+    .then(function(csv){
+      var results = Papa.parse(csv,{header:true,skipEmptyLines:true});
+      if(!results.data||!results.data.length){ document.getElementById('content').innerHTML='<div class="error-box">No se encontraron datos.</div>'; return; }
+      document.getElementById('last-update').textContent='Actualizado '+new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+      renderPrinters(results.data);
+    })
+    .catch(function(err){ document.getElementById('content').innerHTML='<div class="error-box">Error al conectar: '+err.message+'</div>'; });
+}
+
+function renderPrinters(raw){
+  var headers  = Object.keys(raw[0]);
+  var nameCol  = headers.find(function(h){ return h.toLowerCase().includes('nombre')||h.toLowerCase()==='name'; })||headers[0];
+  var serialCol= headers.find(function(h){ return h.toLowerCase().includes('serie')||h.toLowerCase().includes('serial'); })||'';
+
+  // Detectar columnas de fecha DD-MM-YYYY y ordenarlas
+  var dateCols = headers.filter(function(h){ return parseDateCol(h); });
+  dateCols.sort(function(a,b){ return parseDateCol(a)-parseDateCol(b); });
+
+  var lastCol = dateCols[dateCols.length-1] || null;
+  var prevCol = dateCols[dateCols.length-2] || null;
+
+  // Construir lista de impresoras
+  var printers = raw.map(function(r){
+    var last = lastCol ? (parseInt((r[lastCol]||'0').toString().replace(/[^0-9]/g,''))||0) : 0;
+    var prev = prevCol ? (parseInt((r[prevCol]||'0').toString().replace(/[^0-9]/g,''))||0) : 0;
+    return{
+      name:   (r[nameCol]||'').trim(),
+      serial: serialCol?(r[serialCol]||'—').trim():'—',
+      pages:  last,
+      prev:   prev,
+      diff:   prevCol ? Math.max(last-prev,0) : null,
+      raw:    r
+    };
+  }).filter(function(p){ return p.name && p.pages>0; });
+
+  var totalPages = printers.reduce(function(s,p){ return s+p.pages; },0);
+  var totalDiff  = prevCol ? printers.reduce(function(s,p){ return s+(p.diff||0); },0) : null;
+  var maxPages   = Math.max.apply(null, printers.map(function(p){ return p.pages; }).concat([1]));
+  var maxDiff    = prevCol ? Math.max.apply(null, printers.map(function(p){ return p.diff||0; }).concat([1])) : 1;
+
+  // Totales por mes para gráfico
+  var monthTotals = dateCols.map(function(col){
+    return printers.reduce(function(s,p){ return s+(parseInt((p.raw[col]||'0').toString().replace(/[^0-9]/g,''))||0); },0);
+  });
+
+  // KPIs
+  var kpisHtml =
+    '<div class="kpi-card" style="--kpi-color:var(--accent2)"><div class="kpi-label">Total impresoras</div><div class="kpi-value" style="color:var(--accent2)">'+printers.length+'</div><div class="kpi-sub">registradas</div></div>'+
+    '<div class="kpi-card" style="--kpi-color:var(--accent)"><div class="kpi-label">Total paginas '+(lastCol||'')+'</div><div class="kpi-value" style="color:var(--accent);font-size:20px">'+fmtNum(totalPages)+'</div><div class="kpi-sub">acumulado</div></div>'+
+    (totalDiff!==null?'<div class="kpi-card" style="--kpi-color:var(--green)"><div class="kpi-label">Paginas del mes</div><div class="kpi-value" style="color:var(--green);font-size:20px">'+fmtNum(totalDiff)+'</div><div class="kpi-sub">vs '+prevCol+'</div></div>':'')+
+    '<div class="kpi-card" style="--kpi-color:var(--green)"><div class="kpi-label">Promedio por impresora</div><div class="kpi-value" style="color:var(--green);font-size:20px">'+fmtNum(totalPages/Math.max(printers.length,1))+'</div><div class="kpi-sub">paginas promedio</div></div>'+
+    '<div class="kpi-card" style="--kpi-color:var(--amber)"><div class="kpi-label">Ultima actualizacion</div><div class="kpi-value" style="color:var(--amber);font-size:18px">'+(lastCol||'—')+'</div><div class="kpi-sub">fecha del contador</div></div>';
+
+  // Tabla — ordenada por diferencia si existe, si no por total
+  var sortedPrinters = printers.slice().sort(function(a,b){
+    return prevCol ? (b.diff||0)-(a.diff||0) : b.pages-a.pages;
+  });
+
+  var theadDate = dateCols.map(function(col){ return '<th>'+col+'</th>'; }).join('');
+  var theadDiff = prevCol ? '<th>Diferencia</th>' : '';
+
+  var rows = sortedPrinters.map(function(p){
+    var pct     = Math.round(p.pages/maxPages*100);
+    var diffPct = prevCol ? Math.round((p.diff||0)/maxDiff*100) : 0;
+    var dateCells = dateCols.map(function(col){
+      var val = parseInt((p.raw[col]||'0').toString().replace(/[^0-9]/g,''))||0;
+      var isLast = col===lastCol;
+      return '<td><div style="font-size:13px;font-weight:'+(isLast?'600':'400')+';color:'+(isLast?'var(--accent2)':'var(--text2)')+'">'+fmtNum(val)+'</div>'+(isLast?'<div class="pages-bar"><div class="pages-bar-fill" style="width:'+pct+'%"></div></div>':'')+'</td>';
+    }).join('');
+    var diffCell = prevCol
+      ? '<td><div style="font-size:13px;font-weight:600;color:var(--green)">+'+fmtNum(p.diff||0)+'</div><div class="pages-bar"><div class="diff-bar-fill" style="width:'+diffPct+'%"></div></div></td>'
+      : '';
+    return '<tr><td style="font-weight:500">'+p.name+'</td><td style="font-family:DM Mono,monospace;color:var(--text3);font-size:11px">'+p.serial+'</td>'+dateCells+diffCell+'</tr>';
+  }).join('');
+
+  document.getElementById('content').innerHTML =
+    '<div class="kpi-grid">'+kpisHtml+'</div>'+
+    (dateCols.length>1
+      ? '<p class="section-title">Evolucion total por mes</p>'+
+        '<div class="chart-card">'+
+          '<div class="chart-title">Total de paginas impresas por mes</div>'+
+          '<div class="chart-sub">Suma de todas las impresoras</div>'+
+          '<div style="position:relative;height:220px"><canvas id="chart-total"></canvas></div>'+
+        '</div>'
+      : '')+
+    '<p class="section-title">Detalle por impresora</p>'+
+    '<div class="table-wrap" style="overflow-x:auto"><table><thead><tr><th>Nombre</th><th>N° Serie</th>'+theadDate+theadDiff+'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+
+  // Gráfico evolución
+  if(dateCols.length>1){
+    destroyChart('chart-total');
+    charts['chart-total']=new Chart(document.getElementById('chart-total'),{
+      type:'line',
+      data:{
+        labels:dateCols,
+        datasets:[{
+          label:'Total paginas',
+          data:monthTotals,
+          borderColor:'#7c5cfc',
+          backgroundColor:'rgba(124,92,252,0.08)',
+          fill:true,tension:0.3,borderWidth:2,
+          pointRadius:5,pointBackgroundColor:'#7c5cfc',
+          pointBorderColor:'#0f1117',pointBorderWidth:2
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:function(ctx){ return ' Total: '+fmtNum(ctx.parsed.y)+' paginas'; }}}},
+        scales:{
+          x:{ticks:{color:'#555e78',font:{size:12}},grid:{display:false}},
+          y:{beginAtZero:false,ticks:{color:'#555e78',font:{size:11},callback:function(v){ return fmtNum(v); }},grid:{color:'rgba(255,255,255,0.04)'}}
+        }
+      }
+    });
+  }
+}
+
+loadData();
+</script>
+</body>
+</html>
