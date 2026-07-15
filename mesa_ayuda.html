@@ -418,18 +418,9 @@ function renderDashboard(tickets){
           '<div class="status-bar-val" style="width:40px">'+e.count+'</div>'+
         '</div>';
       }).join('');
-      // Asignar eventos click
-      var activeTickets=tickets.filter(function(t){return t.status==='Open'||t.status==='Pending';});
-      document.querySelectorAll('.type-row').forEach(function(row,i){
-        row.addEventListener('click',function(){
-          var entry=typeEntries[i];
-          var filtered=activeTickets.filter(function(t){return t.type===entry.name;});
-          showTypeDetail(entry.name, filtered);
-          document.querySelectorAll('.type-row').forEach(function(r){r.style.background='';r.style.borderLeft='';});
-          row.style.background='var(--primary-light)';
-          row.style.borderLeft='3px solid var(--primary)';
-        });
-      });
+      // Guardar para eventos (se asignan después del render)
+      window._typeEntries=typeEntries;
+      window._activeTickets=tickets.filter(function(t){return t.status==='Open'||t.status==='Pending';});
     }
   }
 
@@ -462,6 +453,23 @@ function renderDashboard(tickets){
   window._dashMonthKeys=monthKeys;window._dashMonthLabels=monthLabels;
   window._dashCompanyMonthMap=companyMonthMap;window._dashTop10=top10;
   window._dashCompanyTotals=companyTotals;window._dashAgents=agents;window._dashTickets=tickets;
+
+  // Asignar eventos de tipo DESPUÉS de que el DOM esté listo
+  setTimeout(function(){
+    var entries=window._typeEntries||[];
+    var activeT=window._activeTickets||[];
+    document.querySelectorAll('.type-row').forEach(function(row,i){
+      row.addEventListener('click',function(){
+        var entry=entries[i];
+        if(!entry)return;
+        var filtered=activeT.filter(function(t){return t.type===entry.name;});
+        showTypeDetail(entry.name, filtered);
+        document.querySelectorAll('.type-row').forEach(function(r){r.style.background='';r.style.borderLeft='';});
+        row.style.background='var(--primary-light)';
+        row.style.borderLeft='3px solid var(--primary)';
+      });
+    });
+  },100);
 
   // Company select
   var sel=document.getElementById('company-select');
