@@ -401,56 +401,35 @@ function renderDashboard(tickets){
 
   // Lollipop removido
 
-  // Open days - crear canvas desde JS después de que el DOM esté listo
-  destroyChart('opendays');
-  var _dayBuckets=dayBuckets.slice(), _dayLabels=dayLabels.slice();
-  setTimeout(function(){
-    var container=document.getElementById('opendays-container');
-    if(!container)return;
-    container.innerHTML='';
-    var canvas=document.createElement('canvas');
-    container.appendChild(canvas);
-    charts['opendays']=new Chart(canvas,{
-      type:'bar',
-      data:{
-        labels:_dayLabels,
-        datasets:[{
-          data:_dayBuckets,
-          backgroundColor:'rgba(118,158,51,0.75)',
-          borderRadius:6,
-          borderSkipped:false
-        }]
-      },
-      options:{
-        responsive:true,maintainAspectRatio:false,
-        plugins:{
-          legend:{display:false},
-          tooltip:{callbacks:{label:function(ctx){return' '+ctx.parsed.y+' tickets';}}}
-        },
-        scales:{
-          x:{ticks:{color:'#a0aec0',font:{size:10}},grid:{display:false}},
-          y:{beginAtZero:true,ticks:{color:'#a0aec0',font:{size:10},stepSize:1},grid:{color:'rgba(0,0,0,0.04)'}}
-        }
-      }
-    });
-  },100);
+  // Panel detalle por tipo - se activa al hacer clic
 
-  // Type bars
+  // Type bars clickeables
   var typeEl=document.getElementById('type-bars');
   if(typeEl){
     if(!typeEntries.length){
       typeEl.innerHTML='<p style="color:var(--text3);font-size:12px;text-align:center;padding:20px">No hay tickets activos</p>';
     } else {
-      typeEl.innerHTML=typeEntries.map(function(e){
+      typeEl.innerHTML=typeEntries.map(function(e,idx){
         var pct2=Math.round(e.count/maxType*100);
-        // Acortar nombre si es muy largo
         var shortName=e.name.replace('TI - ','');
-        return'<div class="status-bar-row">'+
+        return'<div class="status-bar-row type-row" data-idx="'+idx+'" style="cursor:pointer;border-radius:6px;padding:3px 4px;transition:background .15s" onmouseover="this.style.background='var(--primary-light)'" onmouseout="this.style.background=''">'+
           '<div class="status-bar-label" style="width:160px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+e.name+'">'+shortName+'</div>'+
           '<div class="status-bar-track"><div class="status-bar-fill" style="width:'+pct2+'%"></div></div>'+
           '<div class="status-bar-val" style="width:40px">'+e.count+'</div>'+
         '</div>';
       }).join('');
+      // Asignar eventos click
+      var activeTickets=tickets.filter(function(t){return t.status==='Open'||t.status==='Pending';});
+      document.querySelectorAll('.type-row').forEach(function(row,i){
+        row.addEventListener('click',function(){
+          var entry=typeEntries[i];
+          var filtered=activeTickets.filter(function(t){return t.type===entry.name;});
+          showTypeDetail(entry.name, filtered);
+          document.querySelectorAll('.type-row').forEach(function(r){r.style.background='';r.style.borderLeft='';});
+          row.style.background='var(--primary-light)';
+          row.style.borderLeft='3px solid var(--primary)';
+        });
+      });
     }
   }
 
@@ -556,6 +535,38 @@ function renderCompanyCards(agentName){
       });
     });
   },0);
+}
+
+function showTypeDetail(typeName, tickets){
+  var title=document.getElementById('type-detail-title');
+  var cont=document.getElementById('type-detail-content');
+  if(!title||!cont)return;
+  var shortName=typeName.replace('TI - ','');
+  title.textContent=shortName+' ('+tickets.length+' activos)';
+  if(!tickets.length){
+    cont.innerHTML='<p style="color:var(--text3);font-size:12px;text-align:center;padding:20px">No hay tickets activos</p>';
+    return;
+  }
+  cont.innerHTML='<div style="overflow-y:auto;max-height:280px;width:100%">'+
+    '<table style="width:100%;border-collapse:collapse;font-size:12px">'+
+    '<thead><tr>'+
+      '<th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);background:var(--bg3)">#ID</th>'+
+      '<th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);background:var(--bg3)">Asunto</th>'+
+      '<th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);background:var(--bg3)">Agente</th>'+
+      '<th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);background:var(--bg3)">Estado</th>'+
+    '</tr></thead><tbody>'+
+    tickets.map(function(t){
+      var statusColor=t.status==='Open'?'var(--primary)':'var(--amber)';
+      var agentShort=(t.agent||'—').split(' ')[0];
+      return'<tr style="border-bottom:1px solid var(--border)">'+
+        '<td style="padding:7px 10px;font-family:DM Mono,monospace;color:var(--primary);font-weight:600;white-space:nowrap">#'+(t.ticketId||'—')+'</td>'+
+        '<td style="padding:7px 10px;color:var(--text);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(t.subject||'')+'">'+(t.subject||'Sin asunto')+'</td>'+
+        '<td style="padding:7px 10px;color:var(--text2);white-space:nowrap">'+agentShort+'</td>'+
+        '<td style="padding:7px 10px"><span style="padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;background:'+statusColor+'22;color:'+statusColor+'">'+t.status+'</span></td>'+
+      '</tr>';
+    }).join('')+
+    '</tbody></table>'+
+  '</div>';
 }
 
 loadData();
