@@ -8,29 +8,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
-:root{
-  --primary:#769e33;
-  --primary-light:rgba(118,158,51,0.12);
-  --primary-mid:rgba(118,158,51,0.25);
-  --bg:#f5f6fa;
-  --bg2:#ffffff;
-  --bg3:#f0f2f5;
-  --border:#e4e7ef;
-  --border2:#d0d5e3;
-  --text:#1a1f36;
-  --text2:#6b7a99;
-  --text3:#a0aec0;
-  --green:#2ecc71;
-  --amber:#f59e0b;
-  --red:#e74c3c;
-  --teal:#0ea5e9;
-  --radius:12px;
-  --shadow:0 1px 4px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.04);
-}
+:root{--primary:#769e33;--primary-light:rgba(118,158,51,0.12);--bg:#f5f6fa;--bg2:#fff;--bg3:#f0f2f5;--border:#e4e7ef;--border2:#d0d5e3;--text:#1a1f36;--text2:#6b7a99;--text3:#a0aec0;--green:#2ecc71;--amber:#f59e0b;--red:#e74c3c;--teal:#0ea5e9;--radius:12px;--shadow:0 1px 4px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.04)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6}
-
-/* HEADER */
 .header{padding:14px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#fff;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
 .header-left{display:flex;align-items:center;gap:12px}
 .back-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:12px;text-decoration:none;transition:all .15s;display:flex;align-items:center;gap:5px}
@@ -41,11 +21,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .last-update{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
 .refresh-btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border2);background:#fff;color:var(--text2);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all .15s}
 .refresh-btn:hover{border-color:var(--primary);color:var(--primary)}
-
-/* MAIN */
 .main{padding:20px 28px;max-width:1400px;margin:0 auto}
-
-/* FILTER BAR */
 .filter-bar{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;margin-bottom:20px;display:flex;align-items:center;flex-wrap:wrap;gap:12px;box-shadow:var(--shadow)}
 .filter-bar label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-weight:500}
 .filter-bar input[type=date]{background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;cursor:pointer}
@@ -54,52 +30,27 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .filter-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all .15s}
 .filter-btn:hover{border-color:var(--primary);color:var(--primary)}
 .filter-count{font-size:11px;color:var(--text3);margin-left:auto;font-family:'DM Mono',monospace}
-
-/* KPI */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px}
 .kpi-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.kpi-left{}
 .kpi-value{font-size:28px;font-weight:700;color:var(--text);letter-spacing:-1.5px;line-height:1}
 .kpi-pct{font-size:13px;color:var(--text2);font-weight:400;margin-left:4px}
 .kpi-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;font-weight:500;margin-top:5px}
 .kpi-bars{display:flex;align-items:flex-end;gap:3px;height:32px}
-.kpi-bar{width:6px;border-radius:3px;background:var(--primary-mid)}
-.kpi-bar.active{background:var(--primary)}
-
-/* SECTION */
+.kpi-bar{width:6px;border-radius:3px;background:rgba(118,158,51,0.25)}
+.kpi-bar.hi{background:var(--primary)}
 .section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:12px;margin-top:24px}
-
-/* GRID LAYOUTS */
-.grid-3{display:grid;grid-template-columns:1fr 2fr 1fr;gap:14px;margin-bottom:14px}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .grid-2-1{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
-
-/* CARDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow)}
 .card-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:14px}
-
-/* STATUS BARS (horizontal) */
-.status-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.status-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;cursor:default}
 .status-bar-label{font-size:12px;color:var(--text2);width:70px;flex-shrink:0}
 .status-bar-track{flex:1;height:8px;border-radius:4px;background:var(--bg3);overflow:hidden}
-.status-bar-fill{height:100%;border-radius:4px;background:var(--primary);transition:width .5s}
-.status-bar-val{font-size:12px;color:var(--text);font-weight:600;width:70px;text-align:right;flex-shrink:0}
-
-/* LOLLIPOP (severity) */
-.lollipop-wrap{display:flex;align-items:flex-end;justify-content:space-around;height:120px;padding:0 8px}
-.lollipop{display:flex;flex-direction:column;align-items:center;gap:0}
-.lollipop-circle{width:44px;height:44px;border-radius:50%;border:2.5px solid var(--primary);background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--primary)}
-.lollipop-stem{width:2px;background:var(--primary);flex:1;min-height:8px}
-.lollipop-label{font-size:10px;color:var(--text3);margin-top:6px;text-align:center}
-
-/* OPEN DAYS BARS */
-.opendays-wrap{display:flex;align-items:flex-end;justify-content:space-around;height:100px;gap:6px}
-.od-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
-.od-val{font-size:11px;font-weight:600;color:var(--text)}
-.od-bar{width:100%;border-radius:4px 4px 0 0;background:var(--primary);min-height:4px;transition:height .4s}
-.od-label{font-size:10px;color:var(--text3);white-space:nowrap}
-
-/* AGENT PANEL */
+.status-bar-fill{height:100%;border-radius:4px;transition:width .5s}
+.status-bar-val{font-size:12px;color:var(--text);font-weight:600;width:80px;text-align:right;flex-shrink:0}
+.type-row{cursor:pointer;border-radius:6px;padding:3px 4px;transition:background .15s;border-left:3px solid transparent}
+.type-row:hover{background:var(--primary-light)}
+.type-row.active{background:var(--primary-light);border-left-color:var(--primary)}
 .agent-filter-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
 .agent-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--text2);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all .2s;font-weight:500}
 .agent-btn:hover{border-color:var(--primary);color:var(--primary)}
@@ -113,11 +64,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .stat-dot{width:6px;height:6px;border-radius:50%}
 .stat-value{font-size:16px;font-weight:700;letter-spacing:-0.5px}
 .company-card-total{margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px}
-.company-card-total-label{color:var(--text3)}
-.company-card-total-value{font-weight:600;color:var(--text)}
 .cc-bar{height:3px;position:absolute;bottom:0;left:0;right:0;background:var(--bg3)}
 .cc-bar-fill{height:100%;background:var(--primary);transition:width .4s}
-.ticket-list{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:none;flex-direction:column;gap:5px;max-height:240px;overflow-y:auto}
+.ticket-list{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:none;flex-direction:column;gap:5px;max-height:200px;overflow-y:auto}
 .ticket-item{background:var(--bg3);border-radius:6px;padding:7px 9px}
 .ticket-item-top{display:flex;align-items:center;gap:7px;margin-bottom:2px}
 .ticket-id{font-family:'DM Mono',monospace;color:var(--primary);font-weight:600;font-size:11px;flex-shrink:0}
@@ -126,42 +75,31 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .ticket-contact{color:var(--text3);font-size:10px}
 .expand-hint{font-size:10px;color:var(--text3);margin-top:6px;text-align:center}
 .no-tickets{text-align:center;padding:32px;color:var(--text3);font-size:13px;grid-column:1/-1}
-
-/* TABLE */
 .table-wrap{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px;box-shadow:var(--shadow)}
 table{width:100%;border-collapse:collapse;font-size:13px}
 thead th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;background:var(--bg3);border-bottom:1px solid var(--border)}
 tbody td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text)}
 tbody tr:last-child td{border-bottom:none}
 tbody tr:hover td{background:var(--bg3)}
-.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;font-family:'DM Mono',monospace}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
 .b-open{background:rgba(118,158,51,0.12);color:#4a6b1a}
 .b-pending{background:rgba(245,158,11,0.12);color:#92580a}
-.b-resolved{background:rgba(46,204,113,0.12);color:#1a7a3e}
-.b-closed{background:rgba(14,165,233,0.12);color:#0a5a8a}
 .bar-mini{height:4px;border-radius:2px;margin-top:4px;background:var(--primary)}
-
-/* LOADING */
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:50vh;gap:16px}
 .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading p{color:var(--text2);font-size:13px}
 .error-box{background:rgba(231,76,60,0.06);border:1px solid rgba(231,76,60,0.2);border-radius:var(--radius);padding:16px 20px;color:var(--red);font-size:13px}
-
-@media(max-width:1100px){.grid-3{grid-template-columns:1fr 1fr}}
-@media(max-width:900px){.grid-3,.grid-2,.grid-2-1{grid-template-columns:1fr}.main{padding:14px}.header{padding:12px 16px}}
+@media(max-width:1100px){.grid-2-1{grid-template-columns:1fr}}
+@media(max-width:900px){.grid-2{grid-template-columns:1fr}.main{padding:14px}.header{padding:12px 16px}}
 </style>
 </head>
 <body>
-
 <header class="header">
   <div class="header-left">
     <a class="back-btn" href="index.html">← Inicio</a>
     <div class="logo">🎧</div>
-    <div>
-      <h1>Mesa de Ayuda</h1>
-      <div class="header-sub">Tickets de soporte · Freshdesk</div>
-    </div>
+    <div><h1>Mesa de Ayuda</h1><div class="header-sub">Tickets de soporte · Freshdesk</div></div>
   </div>
   <div style="display:flex;align-items:center;gap:12px">
     <span class="last-update" id="last-update"></span>
@@ -171,11 +109,9 @@ tbody tr:hover td{background:var(--bg3)}
 
 <main class="main">
   <div class="filter-bar">
-    <label>Desde</label>
-    <input type="date" id="date-from" onchange="applyFilters()">
+    <label>Desde</label><input type="date" id="date-from" onchange="applyFilters()">
     <span class="filter-sep">→</span>
-    <label>Hasta</label>
-    <input type="date" id="date-to" onchange="applyFilters()">
+    <label>Hasta</label><input type="date" id="date-to" onchange="applyFilters()">
     <button class="filter-btn" onclick="setRange(30)">30 dias</button>
     <button class="filter-btn" onclick="setRange(90)">90 dias</button>
     <button class="filter-btn" onclick="setRange(180)">6 meses</button>
@@ -183,9 +119,7 @@ tbody tr:hover td{background:var(--bg3)}
     <button class="filter-btn" onclick="setAll()">Todo</button>
     <span class="filter-count" id="filter-count"></span>
   </div>
-  <div id="dash-content">
-    <div class="loading"><div class="spinner"></div><p>Cargando datos...</p></div>
-  </div>
+  <div id="dash-content"><div class="loading"><div class="spinner"></div><p>Cargando datos...</p></div></div>
 </main>
 
 <script>
@@ -196,7 +130,7 @@ var charts={};
 function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
 function normStatus(s){s=(s||'').trim().toLowerCase();if(s==='open'||s==='2')return'Open';if(s==='pending'||s==='3')return'Pending';if(s==='resolved'||s==='4')return'Resolved';if(s==='closed'||s==='5')return'Closed';return s||'Unknown';}
 function normPriority(p){p=(p||'').trim().toLowerCase();if(p==='low'||p==='1')return'Low';if(p==='medium'||p==='2')return'Medium';if(p==='high'||p==='3')return'High';if(p==='urgent'||p==='4')return'Urgent';return p||'Unknown';}
-function getField(row,names){for(var i=0;i<names.length;i++)if(row[names[i]]!==undefined&&row[names[i]]!=='')return row[names[i]];return'';}
+function getField(r,names){for(var i=0;i<names.length;i++)if(r[names[i]]!==undefined&&r[names[i]]!=='')return r[names[i]];return'';}
 function parseDate(str){if(!str)return null;var m=str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);if(m)return new Date(parseInt(m[3]),parseInt(m[2])-1,parseInt(m[1]));var d=new Date(str);return isNaN(d)?null:d;}
 function fmtNum(n){return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
 function pct(a,b){return b>0?Math.round(a/b*100):0;}
@@ -222,7 +156,7 @@ function loadData(){
           ticketId:getField(r,['ID del ticket','Ticket ID']),
           subject:getField(r,['Asunto','Subject']),
           contact:getField(r,['Nombre completo','Full Name']),
-          type:(getField(r,['Tipo','Type','tipo','type'])||'Sin tipo').trim()
+          type:(getField(r,['Tipo','Type'])||'Sin tipo').trim()
         };
       });
       document.getElementById('last-update').textContent='Actualizado '+new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
@@ -233,7 +167,10 @@ function loadData(){
 
 function setAll(){
   var valid=allTickets.filter(function(t){return t.created&&!isNaN(t.created);}).map(function(t){return t.created.getTime();});
-  if(valid.length){document.getElementById('date-from').value=new Date(Math.min.apply(null,valid)).toISOString().slice(0,10);document.getElementById('date-to').value=new Date(Math.max.apply(null,valid)).toISOString().slice(0,10);}
+  if(valid.length){
+    document.getElementById('date-from').value=new Date(Math.min.apply(null,valid)).toISOString().slice(0,10);
+    document.getElementById('date-to').value=new Date(Math.max.apply(null,valid)).toISOString().slice(0,10);
+  }
   applyFilters();
 }
 function setRange(days){
@@ -245,7 +182,12 @@ function setRange(days){
 function applyFilters(){
   var from=document.getElementById('date-from').value?new Date(document.getElementById('date-from').value):null;
   var to=document.getElementById('date-to').value?new Date(document.getElementById('date-to').value+'T23:59:59'):null;
-  var filtered=allTickets.filter(function(t){if(!t.created||isNaN(t.created))return true;if(from&&t.created<from)return false;if(to&&t.created>to)return false;return true;});
+  var filtered=allTickets.filter(function(t){
+    if(!t.created||isNaN(t.created))return true;
+    if(from&&t.created<from)return false;
+    if(to&&t.created>to)return false;
+    return true;
+  });
   document.getElementById('filter-count').textContent=filtered.length+' de '+allTickets.length+' tickets';
   renderDashboard(filtered);
 }
@@ -262,7 +204,7 @@ function renderDashboard(tickets){
   var withResp=tickets.filter(function(t){return t.firstRespH&&t.firstRespH>0;});
   var avgResp=withResp.length?withResp.reduce(function(s,t){return s+t.firstRespH;},0)/withResp.length:0;
 
-  // Agent map
+  // Agentes
   var agentMap={};
   tickets.forEach(function(t){
     if(!agentMap[t.agent])agentMap[t.agent]={name:t.agent,total:0,open:0,resolved:0,resH:[],respH:[]};
@@ -273,9 +215,12 @@ function renderDashboard(tickets){
     if(t.firstRespH&&t.firstRespH>0)agentMap[t.agent].respH.push(t.firstRespH);
   });
   var agents=Object.values(agentMap).filter(function(a){var n=a.name.toLowerCase();return n!=='sin asignar'&&n!=='no agent'&&n!=='';}).sort(function(a,b){return b.total-a.total;}).slice(0,10);
-  agents.forEach(function(a){a.avgRes=a.resH.length?Math.round(a.resH.reduce(function(s,v){return s+v;},0)/a.resH.length):null;a.avgResp=a.respH.length?Math.round(a.respH.reduce(function(s,v){return s+v;},0)/a.respH.length):null;});
+  agents.forEach(function(a){
+    a.avgRes=a.resH.length?Math.round(a.resH.reduce(function(s,v){return s+v;},0)/a.resH.length):null;
+    a.avgResp=a.respH.length?Math.round(a.respH.reduce(function(s,v){return s+v;},0)/a.respH.length):null;
+  });
 
-  // Monthly
+  // Mensual
   var monthMap={},slaMap={};
   tickets.forEach(function(t){
     if(!t.created||isNaN(t.created))return;
@@ -288,7 +233,7 @@ function renderDashboard(tickets){
   var monthKeys=Object.keys(monthMap).sort();
   var monthLabels=monthKeys.map(function(k){var p=k.split('-');return new Date(p[0],p[1]-1,1).toLocaleDateString('es-CL',{month:'short',year:'2-digit'});});
 
-  // Company
+  // Empresa
   var companyTotals={};
   tickets.forEach(function(t){if(!companyTotals[t.company])companyTotals[t.company]=0;companyTotals[t.company]++;});
   var top10=Object.keys(companyTotals).sort(function(a,b){return companyTotals[b]-companyTotals[a];}).slice(0,10);
@@ -302,32 +247,10 @@ function renderDashboard(tickets){
     if(t.status==='Resolved'||t.status==='Closed')companyMonthMap[t.company][k].resolved++;
   });
 
-  // Priority counts
-  var priorities=['Urgent','High','Medium','Low'];
-  var prioCounts=priorities.map(function(p){return tickets.filter(function(t){return t.priority===p;}).length;});
-  var maxPrio=Math.max.apply(null,prioCounts.concat([1]));
-
-  // Open days buckets - usa TODOS los tickets open/pending sin filtro de fecha
-  var dayBuckets=[0,0,0,0,0];
-  var dayLabels=['1-5 dias','6-10 dias','11-15 dias','16-20 dias','>20 dias'];
-  var now=new Date();
-  allTickets.filter(function(t){return (t.status==='Open'||t.status==='Pending')&&t.created&&!isNaN(t.created);}).forEach(function(t){
-    var days=Math.floor((now-t.created)/86400000);
-    if(days<=5)dayBuckets[0]++;
-    else if(days<=10)dayBuckets[1]++;
-    else if(days<=15)dayBuckets[2]++;
-    else if(days<=20)dayBuckets[3]++;
-    else dayBuckets[4]++;
-  });
-  var maxDayBucket=Math.max.apply(null,dayBuckets.concat([1]));
-
-  // Max status for bars
-  // Tipos con tickets activos (open o pending)
+  // Tipos activos
   var typeMap={};
   tickets.filter(function(t){return t.status==='Open'||t.status==='Pending';}).forEach(function(t){
-    var tp=t.type||'Sin tipo';
-    if(!typeMap[tp])typeMap[tp]=0;
-    typeMap[tp]++;
+    if(!typeMap[t.type])typeMap[t.type]=0;typeMap[t.type]++;
   });
   var typeEntries=Object.keys(typeMap).map(function(k){return{name:k,count:typeMap[k]};}).sort(function(a,b){return b.count-a.count;});
   var maxType=typeEntries.length?typeEntries[0].count:1;
@@ -335,96 +258,108 @@ function renderDashboard(tickets){
   var maxStatus=Math.max(open,pending,resolved,closed,1);
   var maxAgent=Math.max.apply(null,agents.map(function(a){return a.total;}).concat([1]));
 
-  // Mini sparkline bars (3 bars per KPI)
-  function sparkBars(color){return '<div class="kpi-bars"><div class="kpi-bar" style="height:40%;background:'+color+'"></div><div class="kpi-bar" style="height:65%;background:'+color+'"></div><div class="kpi-bar active" style="height:100%;background:'+color+'"></div></div>';}
+  function sparkBars(c){return '<div class="kpi-bars"><div class="kpi-bar" style="height:40%;background:'+c+'66"></div><div class="kpi-bar" style="height:65%;background:'+c+'99"></div><div class="kpi-bar hi" style="height:100%;background:'+c+'"></div></div>';}
 
-  document.getElementById('dash-content').innerHTML=
-    // KPIs
-    '<div class="kpi-grid">'+
-      '<div class="kpi-card"><div class="kpi-left"><div class="kpi-value">'+fmtNum(total)+'</div><div class="kpi-label">Tickets</div></div>'+sparkBars('var(--primary)')+'</div>'+
-      '<div class="kpi-card"><div class="kpi-left"><div class="kpi-value">'+fmtNum(open)+'<span class="kpi-pct">('+pct(open,total)+'%)</span></div><div class="kpi-label">Abiertos</div></div>'+sparkBars('var(--primary)')+'</div>'+
-      '<div class="kpi-card"><div class="kpi-left"><div class="kpi-value">'+fmtNum(resolved)+'<span class="kpi-pct">('+pct(resolved,total)+'%)</span></div><div class="kpi-label">Resueltos</div></div>'+sparkBars('#2ecc71')+'</div>'+
-      '<div class="kpi-card"><div class="kpi-left"><div class="kpi-value">'+(avgRes>0?avgRes.toFixed(1)+'h':'N/A')+'</div><div class="kpi-label">Tiempo res. prom.</div></div>'+sparkBars('var(--amber)')+'</div>'+
-      '<div class="kpi-card"><div class="kpi-left"><div class="kpi-value">'+overdue+'</div><div class="kpi-label">SLA Violado</div></div>'+sparkBars('var(--red)')+'</div>'+
-      '<div class="kpi-card"><div class="kpi-left"><div class="kpi-value">'+(avgResp>0?avgResp.toFixed(1)+'h':'N/A')+'</div><div class="kpi-label">1a Resp. prom.</div></div>'+sparkBars('#0ea5e9')+'</div>'+
-    '</div>'+
-    // Row 1: estado activo | tendencia mensual (grande)
-    '<div class="grid-2-1" style="margin-bottom:14px">'+
-      '<div class="card"><div class="card-title">Tendencia mensual</div><div style="position:relative;height:220px"><canvas id="chart-monthly"></canvas></div></div>'+
-      '<div class="card"><div class="card-title">Por estado — activos</div>'+
-        '<div style="margin-bottom:12px;padding:12px;background:var(--primary-light);border-radius:8px;display:flex;justify-content:space-between;align-items:center">'+
-          '<div><div style="font-size:28px;font-weight:700;color:var(--primary);letter-spacing:-1px">'+(open+pending)+'</div><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Open + Pending</div></div>'+
-          '<div style="text-align:right"><div style="font-size:13px;color:var(--text2)"><span style="font-weight:600;color:var(--primary)">'+open+'</span> abiertos</div><div style="font-size:13px;color:var(--text2)"><span style="font-weight:600;color:var(--amber)">'+pending+'</span> pendientes</div></div>'+
-        '</div>'+
-        ['Open','Pending','Resolved','Closed'].map(function(s,i){
-          var counts=[open,pending,resolved,closed];
-          var colors=['var(--primary)','var(--amber)','var(--green)','var(--teal)'];
-          return'<div class="status-bar-row"><div class="status-bar-label">'+s+'</div><div class="status-bar-track"><div class="status-bar-fill" style="width:'+pct(counts[i],maxStatus)+'%;background:'+colors[i]+'"></div></div><div class="status-bar-val">'+fmtNum(counts[i])+'<span style="color:var(--text3);font-size:10px;font-weight:400"> ('+pct(counts[i],total)+'%)</span></div></div>';
-        }).join('')+
-      '</div>'+
-    '</div>'+
-    // Tipos activos
-    '<div class="grid-2" style="margin-bottom:14px">'+
-      '<div class="card"><div class="card-title">Tickets activos por tipo (Open + Pending)</div>'+
-        '<div id="type-bars"></div>'+
-      '</div>'+
-      '<div class="card"><div class="card-title">Tickets abiertos por antiguedad</div><div class="opendays-wrap" id="opendays-wrap"></div></div>'+
-    '</div>'+
+  // Construir HTML
+  var html='';
 
-    // SLA completo ancho
-    '<div class="card" style="margin-bottom:14px">'+
-      '<div class="card-title">SLA por mes — Within SLA vs Violated</div>'+
-      '<div style="display:flex;gap:16px;margin-bottom:10px">'+
-        '<span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:3px;background:rgba(118,158,51,0.7);display:inline-block"></span>Within SLA</span>'+
-        '<span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:3px;background:rgba(231,76,60,0.7);display:inline-block"></span>SLA Violated</span>'+
-      '</div>'+
-      '<div style="position:relative;height:260px"><canvas id="chart-sla"></canvas></div>'+
-    '</div>'+
-    // Row 3: company selector
-    '<div class="card" style="margin-bottom:14px"><div class="card-title">Creados vs Resueltos por empresa</div>'+
-      '<div style="margin-bottom:12px"><select id="company-select" onchange="updateCompanyChart()" style="background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:6px 12px;font-size:13px;font-family:DM Sans,sans-serif;outline:none;cursor:pointer;min-width:220px"></select></div>'+
-      '<div id="leg-company" style="display:flex;gap:12px;margin-bottom:10px;font-size:11px;color:var(--text2)"></div>'+
-      '<div style="position:relative;height:220px"><canvas id="chart-company"></canvas></div>'+
-    '</div>'+
-    // Panel agente
-    '<div class="card" style="margin-bottom:14px"><div class="card-title">Panel de trabajo por agente</div>'+
-      '<div class="agent-filter-row" id="agent-btn-row"></div>'+
-      '<div class="company-cards" id="company-cards-grid"></div>'+
-    '</div>'+
-    // Tabla agentes
-    '<p class="section-title">Resumen por agente</p>'+
-    '<div class="table-wrap"><table><thead><tr><th>Agente</th><th>Total</th><th>Abiertos</th><th>Resueltos</th><th>Tiempo res.</th><th>1a resp.</th><th>Carga</th></tr></thead><tbody>'+
-    agents.map(function(a){
-      return'<tr><td style="font-weight:600">'+a.name+'</td><td>'+a.total+'</td><td><span class="badge b-open">'+a.open+'</span></td><td style="color:#1a7a3e;font-weight:600">'+a.resolved+'</td><td style="font-family:DM Mono,monospace;color:var(--primary)">'+(a.avgRes!==null?a.avgRes+'h':'—')+'</td><td style="font-family:DM Mono,monospace;color:#0a5a8a">'+(a.avgResp!==null?a.avgResp+'h':'—')+'</td><td style="min-width:100px"><div style="font-size:11px;color:var(--text3)">'+Math.round(a.total/maxAgent*100)+'%</div><div class="bar-mini" style="width:'+Math.round(a.total/maxAgent*100)+'%"></div></td></tr>';
-    }).join('')+
-    '</tbody></table></div>';
+  // KPIs
+  html+='<div class="kpi-grid">';
+  html+='<div class="kpi-card"><div><div class="kpi-value">'+fmtNum(total)+'</div><div class="kpi-label">Tickets</div></div>'+sparkBars('#769e33')+'</div>';
+  html+='<div class="kpi-card"><div><div class="kpi-value">'+fmtNum(open)+'<span class="kpi-pct">('+pct(open,total)+'%)</span></div><div class="kpi-label">Abiertos</div></div>'+sparkBars('#769e33')+'</div>';
+  html+='<div class="kpi-card"><div><div class="kpi-value">'+fmtNum(resolved)+'<span class="kpi-pct">('+pct(resolved,total)+'%)</span></div><div class="kpi-label">Resueltos</div></div>'+sparkBars('#2ecc71')+'</div>';
+  html+='<div class="kpi-card"><div><div class="kpi-value">'+(avgRes>0?avgRes.toFixed(1)+'h':'N/A')+'</div><div class="kpi-label">Tiempo res. prom.</div></div>'+sparkBars('#f59e0b')+'</div>';
+  html+='<div class="kpi-card"><div><div class="kpi-value">'+overdue+'</div><div class="kpi-label">SLA Violado</div></div>'+sparkBars('#e74c3c')+'</div>';
+  html+='<div class="kpi-card"><div><div class="kpi-value">'+(avgResp>0?avgResp.toFixed(1)+'h':'N/A')+'</div><div class="kpi-label">1a Resp. prom.</div></div>'+sparkBars('#0ea5e9')+'</div>';
+  html+='</div>';
 
-  // Lollipop removido
+  // Row 1: Tendencia | Estado
+  html+='<div class="grid-2-1">';
+  html+='<div class="card"><div class="card-title">Tendencia mensual</div><div style="position:relative;height:220px"><canvas id="chart-monthly"></canvas></div></div>';
+  html+='<div class="card"><div class="card-title">Por estado — activos</div>';
+  html+='<div style="margin-bottom:12px;padding:12px;background:var(--primary-light);border-radius:8px;display:flex;justify-content:space-between;align-items:center">';
+  html+='<div><div style="font-size:28px;font-weight:700;color:var(--primary);letter-spacing:-1px">'+(open+pending)+'</div><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Open + Pending</div></div>';
+  html+='<div style="text-align:right"><div style="font-size:13px;color:var(--text2)"><span style="font-weight:600;color:var(--primary)">'+open+'</span> abiertos</div><div style="font-size:13px;color:var(--text2)"><span style="font-weight:600;color:var(--amber)">'+pending+'</span> pendientes</div></div>';
+  html+='</div>';
+  var sColors=['#769e33','#f59e0b','#2ecc71','#0ea5e9'];
+  ['Open','Pending','Resolved','Closed'].forEach(function(s,i){
+    var c=[open,pending,resolved,closed][i];
+    html+='<div class="status-bar-row"><div class="status-bar-label">'+s+'</div><div class="status-bar-track"><div class="status-bar-fill" style="width:'+pct(c,maxStatus)+'%;background:'+sColors[i]+'"></div></div><div class="status-bar-val">'+fmtNum(c)+' <span style="color:var(--text3);font-size:10px;font-weight:400">('+pct(c,total)+'%)</span></div></div>';
+  });
+  html+='</div>';
+  html+='</div>';
 
-  // Panel detalle por tipo - se activa al hacer clic
-
-  // Type bars clickeables
-  var typeEl=document.getElementById('type-bars');
-  if(typeEl){
-    if(!typeEntries.length){
-      typeEl.innerHTML='<p style="color:var(--text3);font-size:12px;text-align:center;padding:20px">No hay tickets activos</p>';
-    } else {
-      typeEl.innerHTML=typeEntries.map(function(e,idx){
-        var pct2=Math.round(e.count/maxType*100);
-        var shortName=e.name.replace('TI - ','');
-        return'<div class="status-bar-row type-row" data-idx="'+idx+'" style="cursor:pointer;border-radius:6px;padding:3px 4px;transition:background .15s" onmouseover="this.style.background='var(--primary-light)'" onmouseout="this.style.background=''">'+
-          '<div class="status-bar-label" style="width:160px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+e.name+'">'+shortName+'</div>'+
-          '<div class="status-bar-track"><div class="status-bar-fill" style="width:'+pct2+'%"></div></div>'+
-          '<div class="status-bar-val" style="width:40px">'+e.count+'</div>'+
-        '</div>';
-      }).join('');
-      // Guardar para eventos (se asignan después del render)
-      window._typeEntries=typeEntries;
-      window._activeTickets=tickets.filter(function(t){return t.status==='Open'||t.status==='Pending';});
-    }
+  // Row 2: Tipos | Detalle de tipo
+  html+='<div class="grid-2">';
+  html+='<div class="card"><div class="card-title">Tickets activos por tipo (Open + Pending)</div><div id="type-bars">';
+  if(!typeEntries.length){
+    html+='<p style="color:var(--text3);font-size:12px;text-align:center;padding:20px">No hay tickets activos</p>';
+  } else {
+    typeEntries.forEach(function(e,i){
+      var p2=Math.round(e.count/maxType*100);
+      var shortName=e.name.replace('TI - ','');
+      html+='<div class="status-bar-row type-row" data-idx="'+i+'">';
+      html+='<div class="status-bar-label" style="width:160px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+e.name+'">'+shortName+'</div>';
+      html+='<div class="status-bar-track"><div class="status-bar-fill" style="width:'+p2+'%;background:var(--primary)"></div></div>';
+      html+='<div class="status-bar-val" style="width:40px">'+e.count+'</div>';
+      html+='</div>';
+    });
   }
+  html+='</div></div>';
+  html+='<div class="card"><div class="card-title" id="type-detail-title">Detalle de tipo</div>';
+  html+='<div id="type-detail-content" style="display:flex;align-items:center;justify-content:center;min-height:180px"><p style="color:var(--text3);font-size:12px">Selecciona un tipo para ver el detalle</p></div>';
+  html+='</div>';
+  html+='</div>';
 
-  // Chart monthly trend
+  // SLA
+  html+='<div class="card" style="margin-bottom:14px">';
+  html+='<div class="card-title">SLA por mes — Within SLA vs Violated</div>';
+  html+='<div style="display:flex;gap:16px;margin-bottom:10px">';
+  html+='<span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:3px;background:rgba(118,158,51,0.7);display:inline-block"></span>Within SLA</span>';
+  html+='<span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:3px;background:rgba(231,76,60,0.7);display:inline-block"></span>SLA Violated</span>';
+  html+='</div>';
+  html+='<div style="position:relative;height:260px"><canvas id="chart-sla"></canvas></div>';
+  html+='</div>';
+
+  // Empresa
+  html+='<div class="card" style="margin-bottom:14px">';
+  html+='<div class="card-title">Creados vs Resueltos por empresa</div>';
+  html+='<div style="margin-bottom:12px"><select id="company-select" onchange="updateCompanyChart()" style="background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:6px 12px;font-size:13px;font-family:DM Sans,sans-serif;outline:none;cursor:pointer;min-width:220px"></select></div>';
+  html+='<div id="leg-company" style="display:flex;gap:12px;margin-bottom:10px;font-size:11px;color:var(--text2)"></div>';
+  html+='<div style="position:relative;height:220px"><canvas id="chart-company"></canvas></div>';
+  html+='</div>';
+
+  // Panel agente
+  html+='<div class="card" style="margin-bottom:14px">';
+  html+='<div class="card-title">Panel de trabajo por agente</div>';
+  html+='<div class="agent-filter-row" id="agent-btn-row"></div>';
+  html+='<div class="company-cards" id="company-cards-grid"></div>';
+  html+='</div>';
+
+  // Tabla agentes
+  html+='<p class="section-title">Resumen por agente</p>';
+  html+='<div class="table-wrap"><table><thead><tr><th>Agente</th><th>Total</th><th>Abiertos</th><th>Resueltos</th><th>Tiempo res.</th><th>1a resp.</th><th>Carga</th></tr></thead><tbody>';
+  agents.forEach(function(a){
+    html+='<tr><td style="font-weight:600">'+a.name+'</td><td>'+a.total+'</td><td><span class="badge b-open">'+a.open+'</span></td><td style="color:#1a7a3e;font-weight:600">'+a.resolved+'</td>';
+    html+='<td style="font-family:DM Mono,monospace;color:var(--primary)">'+(a.avgRes!==null?a.avgRes+'h':'—')+'</td>';
+    html+='<td style="font-family:DM Mono,monospace;color:#0a5a8a">'+(a.avgResp!==null?a.avgResp+'h':'—')+'</td>';
+    html+='<td style="min-width:100px"><div style="font-size:11px;color:var(--text3)">'+Math.round(a.total/maxAgent*100)+'%</div><div class="bar-mini" style="width:'+Math.round(a.total/maxAgent*100)+'%"></div></td></tr>';
+  });
+  html+='</tbody></table></div>';
+
+  // Insertar HTML
+  document.getElementById('dash-content').innerHTML=html;
+
+  // Guardar globales
+  window._dashMonthKeys=monthKeys;window._dashMonthLabels=monthLabels;
+  window._dashCompanyMonthMap=companyMonthMap;window._dashTop10=top10;
+  window._dashCompanyTotals=companyTotals;window._dashAgents=agents;window._dashTickets=tickets;
+  window._typeEntries=typeEntries;
+  window._activeTickets=tickets.filter(function(t){return t.status==='Open'||t.status==='Pending';});
+
+  // Charts
+  var baseOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}}};
+
   destroyChart('monthly');
   charts['monthly']=new Chart(document.getElementById('chart-monthly'),{
     type:'line',
@@ -435,10 +370,9 @@ function renderDashboard(tickets){
       {label:'Closed',data:monthKeys.map(function(k){return monthMap[k].closed||0;}),borderColor:'#0ea5e9',backgroundColor:'transparent',tension:0.4,borderWidth:1.5,borderDash:[4,3],pointRadius:2,pointBackgroundColor:'#0ea5e9'},
       {label:'Pending',data:monthKeys.map(function(k){return monthMap[k].pending||0;}),borderColor:'#f59e0b',backgroundColor:'transparent',tension:0.4,borderWidth:1.5,pointRadius:2,pointBackgroundColor:'#f59e0b'}
     ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{color:'#a0aec0',font:{size:10},autoSkip:true,maxRotation:45},grid:{display:false}},y:{beginAtZero:true,ticks:{color:'#a0aec0',font:{size:10}},grid:{color:'rgba(0,0,0,0.04)'}}}}
+    options:Object.assign({},baseOpts,{scales:{x:{ticks:{color:'#a0aec0',font:{size:10},autoSkip:true,maxRotation:45},grid:{display:false}},y:{beginAtZero:true,ticks:{color:'#a0aec0',font:{size:10}},grid:{color:'rgba(0,0,0,0.04)'}}}})
   });
 
-  // Chart SLA
   destroyChart('sla');
   charts['sla']=new Chart(document.getElementById('chart-sla'),{
     type:'bar',
@@ -446,36 +380,50 @@ function renderDashboard(tickets){
       {label:'Within SLA',data:monthKeys.map(function(k){return slaMap[k]?slaMap[k].within:0;}),backgroundColor:'rgba(118,158,51,0.7)',stack:'s',borderRadius:2,borderSkipped:false},
       {label:'Violated',data:monthKeys.map(function(k){return slaMap[k]?slaMap[k].violated:0;}),backgroundColor:'rgba(231,76,60,0.7)',stack:'s',borderRadius:2,borderSkipped:false}
     ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{stacked:true,ticks:{color:'#a0aec0',font:{size:10},autoSkip:true,maxRotation:45},grid:{display:false}},y:{stacked:true,beginAtZero:true,ticks:{color:'#a0aec0',font:{size:10}},grid:{color:'rgba(0,0,0,0.04)'}}}}
+    options:Object.assign({},baseOpts,{scales:{x:{stacked:true,ticks:{color:'#a0aec0',font:{size:10},autoSkip:true,maxRotation:45},grid:{display:false}},y:{stacked:true,beginAtZero:true,ticks:{color:'#a0aec0',font:{size:10}},grid:{color:'rgba(0,0,0,0.04)'}}}})
   });
-
-  // Save globals
-  window._dashMonthKeys=monthKeys;window._dashMonthLabels=monthLabels;
-  window._dashCompanyMonthMap=companyMonthMap;window._dashTop10=top10;
-  window._dashCompanyTotals=companyTotals;window._dashAgents=agents;window._dashTickets=tickets;
-
-  // Asignar eventos de tipo DESPUÉS de que el DOM esté listo
-  setTimeout(function(){
-    var entries=window._typeEntries||[];
-    var activeT=window._activeTickets||[];
-    document.querySelectorAll('.type-row').forEach(function(row,i){
-      row.addEventListener('click',function(){
-        var entry=entries[i];
-        if(!entry)return;
-        var filtered=activeT.filter(function(t){return t.type===entry.name;});
-        showTypeDetail(entry.name, filtered);
-        document.querySelectorAll('.type-row').forEach(function(r){r.style.background='';r.style.borderLeft='';});
-        row.style.background='var(--primary-light)';
-        row.style.borderLeft='3px solid var(--primary)';
-      });
-    });
-  },100);
 
   // Company select
   var sel=document.getElementById('company-select');
   if(sel)sel.innerHTML=top10.map(function(c){return'<option value="'+c+'">'+c+' ('+companyTotals[c]+')</option>';}).join('');
   updateCompanyChart();
+
+  // Eventos tipo-row
+  document.querySelectorAll('.type-row').forEach(function(row,i){
+    row.addEventListener('click',function(){
+      var entry=(window._typeEntries||[])[i];
+      if(!entry)return;
+      var filtered=(window._activeTickets||[]).filter(function(t){return t.type===entry.name;});
+      showTypeDetail(entry.name,filtered);
+      document.querySelectorAll('.type-row').forEach(function(r){r.classList.remove('active');});
+      row.classList.add('active');
+    });
+  });
+
   renderAgentBtns();
+}
+
+function showTypeDetail(typeName,tks){
+  var title=document.getElementById('type-detail-title');
+  var cont=document.getElementById('type-detail-content');
+  if(!title||!cont)return;
+  title.textContent=typeName.replace('TI - ','')+' ('+tks.length+' activos)';
+  if(!tks.length){cont.innerHTML='<p style="color:var(--text3);font-size:12px;text-align:center;padding:20px">Sin tickets activos</p>';return;}
+  var rows=tks.map(function(t){
+    var sc=t.status==='Open'?'var(--primary)':'var(--amber)';
+    return '<tr style="border-bottom:1px solid var(--border)">'+
+      '<td style="padding:7px 10px;font-family:DM Mono,monospace;color:var(--primary);font-weight:600">#'+(t.ticketId||'—')+'</td>'+
+      '<td style="padding:7px 10px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(t.subject||'')+'">'+(t.subject||'Sin asunto')+'</td>'+
+      '<td style="padding:7px 10px;color:var(--text2)">'+(t.agent||'—').split(' ')[0]+'</td>'+
+      '<td style="padding:7px 10px"><span style="padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;background:'+sc+'22;color:'+sc+'">'+t.status+'</span></td>'+
+    '</tr>';
+  }).join('');
+  cont.innerHTML='<div style="overflow-y:auto;max-height:280px;width:100%"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr>'+
+    '<th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;background:var(--bg3);border-bottom:1px solid var(--border)">#ID</th>'+
+    '<th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;background:var(--bg3);border-bottom:1px solid var(--border)">Asunto</th>'+
+    '<th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;background:var(--bg3);border-bottom:1px solid var(--border)">Agente</th>'+
+    '<th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;background:var(--bg3);border-bottom:1px solid var(--border)">Estado</th>'+
+    '</tr></thead><tbody>'+rows+'</tbody></table></div>';
 }
 
 function updateCompanyChart(){
@@ -517,64 +465,32 @@ function renderCompanyCards(agentName){
   active.forEach(function(t){var c=t.company||'Sin empresa';if(!cm[c])cm[c]={open:0,pending:0,tickets:[]};if(t.status==='Open')cm[c].open++;if(t.status==='Pending')cm[c].pending++;cm[c].tickets.push(t);});
   var cos=Object.keys(cm).sort(function(a,b){return(cm[b].open+cm[b].pending)-(cm[a].open+cm[a].pending);});
   var maxT=Math.max.apply(null,cos.map(function(c){return cm[c].open+cm[c].pending;}));
-  grid.innerHTML=cos.map(function(c){
+  var html='';
+  cos.forEach(function(c){
     var o=cm[c].open,p=cm[c].pending,tot=o+p,pct2=Math.round(tot/maxT*100);
     var items=cm[c].tickets.map(function(t){
-      return'<div class="ticket-item"><div class="ticket-item-top"><span class="ticket-id">#'+t.ticketId+'</span><span class="ticket-sdot" style="background:'+(t.status==='Open'?'var(--primary)':'var(--amber)')+'"></span><span class="ticket-subject" title="'+(t.subject||'')+'">'+(t.subject||'Sin asunto')+'</span></div><div class="ticket-contact">👤 '+(t.contact||'Sin contacto')+'</div></div>';
+      return '<div class="ticket-item"><div class="ticket-item-top"><span class="ticket-id">#'+t.ticketId+'</span><span class="ticket-sdot" style="background:'+(t.status==='Open'?'var(--primary)':'var(--amber)')+'"></span><span class="ticket-subject" title="'+(t.subject||'')+'">'+(t.subject||'Sin asunto')+'</span></div><div class="ticket-contact">👤 '+(t.contact||'Sin contacto')+'</div></div>';
     }).join('');
-    return'<div class="company-card">'+
+    html+='<div class="company-card">'+
       '<div class="company-card-name" title="'+c+'">'+c+'</div>'+
       '<div class="stat-row"><div class="stat-label"><span class="stat-dot" style="background:var(--primary)"></span>Abiertos</div><div class="stat-value" style="color:var(--primary)">'+o+'</div></div>'+
       '<div class="stat-row"><div class="stat-label"><span class="stat-dot" style="background:var(--amber)"></span>Pendientes</div><div class="stat-value" style="color:var(--amber)">'+p+'</div></div>'+
-      '<div class="company-card-total"><span class="company-card-total-label">Total activo</span><span class="company-card-total-value">'+tot+'</span></div>'+
+      '<div class="company-card-total"><span style="color:var(--text3);font-size:11px">Total activo</span><span style="font-weight:600;font-size:11px">'+tot+'</span></div>'+
       '<div class="expand-hint">▼ ver tickets</div>'+
       '<div class="ticket-list">'+items+'</div>'+
       '<div class="cc-bar"><div class="cc-bar-fill" style="width:'+pct2+'%"></div></div>'+
     '</div>';
-  }).join('');
-  setTimeout(function(){
-    document.querySelectorAll('#company-cards-grid .company-card').forEach(function(card){
-      card.addEventListener('click',function(){
-        var list=card.querySelector('.ticket-list'),hint=card.querySelector('.expand-hint');if(!list)return;
-        var isOpen=list.style.display==='flex';
-        list.style.display=isOpen?'none':'flex';list.style.flexDirection='column';list.style.gap='5px';
-        if(hint)hint.textContent=isOpen?'▼ ver tickets':'▲ cerrar';
-        card.style.borderColor=isOpen?'':'var(--primary)';
-      });
+  });
+  grid.innerHTML=html;
+  document.querySelectorAll('#company-cards-grid .company-card').forEach(function(card){
+    card.addEventListener('click',function(){
+      var list=card.querySelector('.ticket-list'),hint=card.querySelector('.expand-hint');if(!list)return;
+      var isOpen=list.style.display==='flex';
+      list.style.display=isOpen?'none':'flex';list.style.flexDirection='column';list.style.gap='5px';
+      if(hint)hint.textContent=isOpen?'▼ ver tickets':'▲ cerrar';
+      card.style.borderColor=isOpen?'':'var(--primary)';
     });
-  },0);
-}
-
-function showTypeDetail(typeName, tickets){
-  var title=document.getElementById('type-detail-title');
-  var cont=document.getElementById('type-detail-content');
-  if(!title||!cont)return;
-  var shortName=typeName.replace('TI - ','');
-  title.textContent=shortName+' ('+tickets.length+' activos)';
-  if(!tickets.length){
-    cont.innerHTML='<p style="color:var(--text3);font-size:12px;text-align:center;padding:20px">No hay tickets activos</p>';
-    return;
-  }
-  cont.innerHTML='<div style="overflow-y:auto;max-height:280px;width:100%">'+
-    '<table style="width:100%;border-collapse:collapse;font-size:12px">'+
-    '<thead><tr>'+
-      '<th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);background:var(--bg3)">#ID</th>'+
-      '<th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);background:var(--bg3)">Asunto</th>'+
-      '<th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);background:var(--bg3)">Agente</th>'+
-      '<th style="padding:7px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);background:var(--bg3)">Estado</th>'+
-    '</tr></thead><tbody>'+
-    tickets.map(function(t){
-      var statusColor=t.status==='Open'?'var(--primary)':'var(--amber)';
-      var agentShort=(t.agent||'—').split(' ')[0];
-      return'<tr style="border-bottom:1px solid var(--border)">'+
-        '<td style="padding:7px 10px;font-family:DM Mono,monospace;color:var(--primary);font-weight:600;white-space:nowrap">#'+(t.ticketId||'—')+'</td>'+
-        '<td style="padding:7px 10px;color:var(--text);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(t.subject||'')+'">'+(t.subject||'Sin asunto')+'</td>'+
-        '<td style="padding:7px 10px;color:var(--text2);white-space:nowrap">'+agentShort+'</td>'+
-        '<td style="padding:7px 10px"><span style="padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;background:'+statusColor+'22;color:'+statusColor+'">'+t.status+'</span></td>'+
-      '</tr>';
-    }).join('')+
-    '</tbody></table>'+
-  '</div>';
+  });
 }
 
 loadData();
